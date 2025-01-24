@@ -1,0 +1,11 @@
+/home/shane/dev/rust/mail-forge/mail-forge/target/debug/deps/libmailparse-aba02087838727e6.rmeta: /home/shane/.cargo/registry/src/index.crates.io-6f17d22bba15001f/mailparse-0.15.0/src/lib.rs /home/shane/.cargo/registry/src/index.crates.io-6f17d22bba15001f/mailparse-0.15.0/src/addrparse.rs /home/shane/.cargo/registry/src/index.crates.io-6f17d22bba15001f/mailparse-0.15.0/src/body.rs /home/shane/.cargo/registry/src/index.crates.io-6f17d22bba15001f/mailparse-0.15.0/src/dateparse.rs /home/shane/.cargo/registry/src/index.crates.io-6f17d22bba15001f/mailparse-0.15.0/src/header.rs /home/shane/.cargo/registry/src/index.crates.io-6f17d22bba15001f/mailparse-0.15.0/src/headers.rs /home/shane/.cargo/registry/src/index.crates.io-6f17d22bba15001f/mailparse-0.15.0/src/msgidparse.rs
+
+/home/shane/dev/rust/mail-forge/mail-forge/target/debug/deps/mailparse-aba02087838727e6.d: /home/shane/.cargo/registry/src/index.crates.io-6f17d22bba15001f/mailparse-0.15.0/src/lib.rs /home/shane/.cargo/registry/src/index.crates.io-6f17d22bba15001f/mailparse-0.15.0/src/addrparse.rs /home/shane/.cargo/registry/src/index.crates.io-6f17d22bba15001f/mailparse-0.15.0/src/body.rs /home/shane/.cargo/registry/src/index.crates.io-6f17d22bba15001f/mailparse-0.15.0/src/dateparse.rs /home/shane/.cargo/registry/src/index.crates.io-6f17d22bba15001f/mailparse-0.15.0/src/header.rs /home/shane/.cargo/registry/src/index.crates.io-6f17d22bba15001f/mailparse-0.15.0/src/headers.rs /home/shane/.cargo/registry/src/index.crates.io-6f17d22bba15001f/mailparse-0.15.0/src/msgidparse.rs
+
+/home/shane/.cargo/registry/src/index.crates.io-6f17d22bba15001f/mailparse-0.15.0/src/lib.rs:
+/home/shane/.cargo/registry/src/index.crates.io-6f17d22bba15001f/mailparse-0.15.0/src/addrparse.rs:
+/home/shane/.cargo/registry/src/index.crates.io-6f17d22bba15001f/mailparse-0.15.0/src/body.rs:
+/home/shane/.cargo/registry/src/index.crates.io-6f17d22bba15001f/mailparse-0.15.0/src/dateparse.rs:
+/home/shane/.cargo/registry/src/index.crates.io-6f17d22bba15001f/mailparse-0.15.0/src/header.rs:
+/home/shane/.cargo/registry/src/index.crates.io-6f17d22bba15001f/mailparse-0.15.0/src/headers.rs:
+/home/shane/.cargo/registry/src/index.crates.io-6f17d22bba15001f/mailparse-0.15.0/src/msgidparse.rs:

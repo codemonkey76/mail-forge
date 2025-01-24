@@ -1,0 +1,39 @@
+use chrono::Utc;
+use rand::distributions::Alphanumeric;
+use rand::{thread_rng, Rng};
+use reqwest::Client;
+use serde_json::json;
+
+use crate::webhook::utils::generate_signature;
+
+pub async fn forward_to_webhook(
+    webhook: &str,
+    raw_email: &str,
+) -> Result<(), Box<dyn std::error::Error>> {
+    let client = Client::new();
+    let api_key = "your-shared-secret";
+
+    let timestamp = Utc::now().timestamp().to_string();
+
+    let token: String = thread_rng()
+        .sample_iter(&Alphanumeric)
+        .take(32)
+        .map(char::from)
+        .collect();
+
+    let signature = generate_signature(api_key, &timestamp, &token);
+
+    let payload = json!({
+    "email": raw_email,
+    "timestamp": timestamp,
+    "token": token,
+    "signature": signature,
+    });
+
+    let response = client.post(webhook).json(&payload).send().await?;
+    if response.status().is_success() {
+        Ok(())
+    } else {
+        Err(format!("Webhook returned status: {}", response.status()).into())
+    }
+}
