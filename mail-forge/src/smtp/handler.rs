@@ -9,6 +9,7 @@ use crate::webhook::client::forward_to_webhook;
 use crate::webhook::mapping::get_webhook_for_recipient;
 
 const MAX_SIZE: usize = 35882577;
+const HOSTNAME: &str = "27-32-78-76.static.tpgi.com.au";
 
 #[derive(Default)]
 struct SessionState {
@@ -128,14 +129,13 @@ async fn handle_helo(
     arguments: &str,
 ) -> Result<(), Box<dyn std::error::Error>> {
     state.helo = Some(arguments.to_string());
-    let smtp_banner = "mail.textify.asgcom.net";
 
     let response = format!(
         "250-{} Mail FORGE ESMTP Server Ready\r\n\
         250-Size {}\r\n\
         250-8BITMIME\r\n\
         250 HELP\r\n",
-        smtp_banner, MAX_SIZE
+        HOSTNAME, MAX_SIZE
     );
 
     socket.write_all(response.as_bytes()).await?;
@@ -148,12 +148,11 @@ async fn handle_ehlo(
     arguments: &str,
 ) -> Result<(), Box<dyn std::error::Error>> {
     state.helo = Some(arguments.to_string());
-    let smtp_banner = "mail.textify.asgcom.net";
     socket
         .write_all(
             format!(
                 "250-{} Mail Forge ESMTP Server Ready\r\n250-SIZE {}\r\n250 HELP\r\n",
-                smtp_banner, MAX_SIZE,
+                HOSTNAME, MAX_SIZE,
             )
             .as_bytes(),
         )
