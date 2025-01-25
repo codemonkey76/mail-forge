@@ -128,13 +128,14 @@ async fn handle_helo(
     arguments: &str,
 ) -> Result<(), Box<dyn std::error::Error>> {
     state.helo = Some(arguments.to_string());
+    let smtp_banner = "mail.textify.asgcom.net";
 
     let response = format!(
-        "250-Mail FORGE SMTP Server Ready\r\n\
+        "250-{} Mail FORGE ESMTP Server Ready\r\n\
         250-Size {}\r\n\
         250-8BITMIME\r\n\
         250 HELP\r\n",
-        MAX_SIZE
+        smtp_banner, MAX_SIZE
     );
 
     socket.write_all(response.as_bytes()).await?;
@@ -147,8 +148,15 @@ async fn handle_ehlo(
     arguments: &str,
 ) -> Result<(), Box<dyn std::error::Error>> {
     state.helo = Some(arguments.to_string());
+    let smtp_banner = "mail.textify.asgcom.net";
     socket
-        .write_all(b"250-Mail Forge SMTP Server REady\r\n250-SIZE 35882577\r\n250 HELP\r\n")
+        .write_all(
+            format!(
+                "250-{} Mail Forge ESMTP Server Ready\r\n250-SIZE {}\r\n250 HELP\r\n",
+                smtp_banner, MAX_SIZE,
+            )
+            .as_bytes(),
+        )
         .await?;
     Ok(())
 }
