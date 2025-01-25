@@ -42,7 +42,7 @@ pub async fn handle_client(
     info!("Accepted connection from {}", addr);
 
     if let Err(e) = socket
-        .write_all(b"220 Mail Forge SMTP Server Ready\r\n")
+        .write_all(format!("220 {} Mail Forge SMTP Server Ready\r\n", HOSTNAME).as_bytes())
         .await
     {
         error!("Failed to send greeting to {}: {}", addr, e);
