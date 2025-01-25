@@ -1,0 +1,4 @@
+smtp_bind_address = "127.0.0.1:25"
+
+[webhooks]
+"*@textify.asgcom.net" = "https://textify.asgcom.net/inbound"

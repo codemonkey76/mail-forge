@@ -1,10 +1,12 @@
 use std::collections::HashMap;
+use std::sync::Arc;
 
 use log::{error, info};
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
 use tokio::net::TcpStream;
 
 use crate::webhook::client::forward_to_webhook;
+use crate::webhook::mapping::get_webhook_for_recipient;
 
 const MAX_SIZE: usize = 35882577;
 
@@ -34,7 +36,7 @@ impl SessionState {
 pub async fn handle_client(
     mut socket: TcpStream,
     addr: std::net::SocketAddr,
-    webhook_mapping: &WebhookMapping,
+    webhook_mapping: Arc<HashMap<String, String>>,
 ) {
     info!("Accepted connection from {}", addr);
 
@@ -50,6 +52,7 @@ pub async fn handle_client(
     let mut session_state = SessionState::new();
 
     loop {
+        let mapping = Arc::clone(&webhook_mapping);
         match socket.read(&mut buffer).await {
             Ok(0) => {
                 info!("Connection closed by {}", addr);
@@ -60,7 +63,9 @@ pub async fn handle_client(
                 info!("Received: {}", request.trim());
 
                 // Parse and handle the command
-                if let Err(e) = process_command(&mut socket, &mut session_state, &request).await {
+                if let Err(e) =
+                    process_command(&mut socket, &mut session_state, &request, mapping).await
+                {
                     info!("Closing connection with {}: {}", addr, e);
                     break;
                 }
@@ -78,7 +83,7 @@ async fn process_command(
     socket: &mut TcpStream,
     session_state: &mut SessionState,
     request: &str,
-    webhook_mapping: &WebhookMapping,
+    webhook_mapping: Arc<HashMap<String, String>>,
 ) -> Result<(), Box<dyn std::error::Error>> {
     let mut parts = request.trim().splitn(2, ' ');
     let command = parts.next().unwrap_or("").to_uppercase();
@@ -93,7 +98,7 @@ async fn process_command(
             handle_mail_from(socket, session_state, arguments).await
         }
         "RCPT" if arguments.to_uppercase().starts_with("TO:") => {
-            handle_rcpt_to(socket, session_state, arguments).await
+            handle_rcpt_to(socket, session_state, arguments, webhook_mapping).await
         }
         "DATA" => {
             if session_state.is_ready_for_data() {
@@ -180,6 +185,7 @@ async fn handle_rcpt_to(
     socket: &mut TcpStream,
     state: &mut SessionState,
     arguments: &str,
+    webhook_mapping: Arc<HashMap<String, String>>,
 ) -> Result<(), Box<dyn std::error::Error>> {
     if !arguments.to_uppercase().starts_with("TO:") {
         socket
@@ -201,44 +207,19 @@ async fn handle_rcpt_to(
         return Ok(());
     }
 
-    state.rcpt_to.push(email.to_string());
-    socket.write_all(b"250 2.5.1 OK\r\n").await?;
+    if get_webhook_for_recipient(email, &webhook_mapping).is_some() {
+        state.rcpt_to.push(email.to_string());
+        socket.write_all(b"250 2.1.5 Recipient OK\r\n").await?;
+    } else {
+        socket.write_all(b"550 5.7.1 Unable to relay\r\n").await?;
+    }
     Ok(())
-}
-
-pub struct WebhookMapping {
-    map: HashMap<String, String>,
-}
-
-impl WebhookMapping {
-    fn new() -> Self {
-        Self {
-            map: HashMap::new(),
-        }
-    }
-
-    fn add_mapping(&mut self, recipient: &str, webhook: &str) {
-        self.map.insert(recipient.to_string(), webhook.to_string());
-    }
-
-    fn get_webhook(&self, recipient: &str) -> Option<&String> {
-        self.map.get(recipient)
-    }
-}
-
-pub fn load_webhook_mapping() -> WebhookMapping {
-    let mut mapping = WebhookMapping::new();
-    mapping.add_mapping("recipient1@example.com", "https://webhook.site/1");
-    mapping.add_mapping("recipient1@example.com", "https://webhook.site/1");
-    mapping.add_mapping("recipient1@example.com", "https://webhook.site/1");
-    mapping.add_mapping("recipient1@example.com", "https://webhook.site/1");
-    mapping
 }
 
 async fn handle_data(
     socket: &mut TcpStream,
     state: &mut SessionState,
-    webhook_mapping: &WebhookMapping,
+    webhook_mapping: Arc<HashMap<String, String>>,
 ) -> Result<(), Box<dyn std::error::Error>> {
     socket
         .write_all(b"354 End data with <CR><LF>.<CR><LF>\r\n")
@@ -284,7 +265,7 @@ async fn handle_data(
     socket.write_all(b"250 OK: Message received\r\n").await?;
 
     for recipient in &state.rcpt_to {
-        if let Some(webhook) = webhook_mapping.get_webhook(recipient) {
+        if let Some(webhook) = get_webhook_for_recipient(recipient, &webhook_mapping) {
             if let Err(e) = forward_to_webhook(webhook, &data).await {
                 error!("Failed to forward email to {}: {}", webhook, e);
             } else {
