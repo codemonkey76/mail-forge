@@ -1,5 +1,7 @@
 use std::collections::HashMap;
 
+use crate::config::structs::WebhookConfig;
+
 //#[derive(Clone)]
 //pub struct WebhookMapping {
 //    map: HashMap<String, String>,
@@ -32,8 +34,8 @@ use std::collections::HashMap;
 
 pub fn get_webhook_for_recipient<'a>(
     recipient: &str,
-    webhook_mapping: &'a HashMap<String, String>,
-) -> Option<&'a String> {
+    webhook_mapping: &'a HashMap<String, WebhookConfig>,
+) -> Option<&'a WebhookConfig> {
     if let Some(webhook) = webhook_mapping.get(recipient) {
         return Some(webhook);
     }

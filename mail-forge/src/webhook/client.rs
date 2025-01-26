@@ -4,10 +4,11 @@ use rand::{thread_rng, Rng};
 use reqwest::Client;
 use serde_json::json;
 
+use crate::config::structs::WebhookConfig;
 use crate::webhook::utils::generate_signature;
 
 pub async fn forward_to_webhook(
-    webhook: &str,
+    webhook: &WebhookConfig,
     raw_email: &str,
 ) -> Result<(), Box<dyn std::error::Error>> {
     let client = Client::new();
@@ -30,7 +31,11 @@ pub async fn forward_to_webhook(
     "signature": signature,
     });
 
-    let response = client.post(webhook).json(&payload).send().await?;
+    let response = client
+        .post(webhook.url.clone())
+        .json(&payload)
+        .send()
+        .await?;
     if response.status().is_success() {
         Ok(())
     } else {

@@ -1,0 +1,2068 @@
+   Compiling mail-forge v0.1.0 (/home/shane/dev/rust/mail-forge/mail-forge)
+error[E0277]: the trait bound `tokio::net::TcpStream: AsyncBufRead` is not satisfied
+  --> src/smtp/handler.rs:65:38
+   |
+65 |     if let Err(e) = process_commands(stream, &mut session_state, webhook_mapping, tls_config).await
+   |                     ---------------- ^^^^^^ the trait `AsyncBufRead` is not implemented for `tokio::net::TcpStream`
+   |                     |
+   |                     required by a bound introduced by this call
+   |
+   = help: the following other types implement trait `AsyncBufRead`:
+             &[u8]
+             &mut T
+             Box<T>
+             BufStream<RW>
+             Pin<P>
+             StreamType<S>
+             std::io::Cursor<T>
+             tokio::io::BufReader<R>
+           and 7 others
+note: required by a bound in `process_commands`
+  --> src/smtp/handler.rs:80:33
+   |
+73 | async fn process_commands<S>(
+   |          ---------------- required by a bound in this function
+...
+80 |     S: AsyncRead + AsyncWrite + AsyncBufRead + Unpin,
+   |                                 ^^^^^^^^^^^^ required by this bound in `process_commands`
+
+error[E0277]: the trait bound `tokio::net::TcpStream: AsyncBufRead` is not satisfied
+  --> src/smtp/handler.rs:65:21
+   |
+65 |     if let Err(e) = process_commands(stream, &mut session_state, webhook_mapping, tls_config).await
+   |                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ the trait `AsyncBufRead` is not implemented for `tokio::net::TcpStream`
+   |
+   = help: the following other types implement trait `AsyncBufRead`:
+             &[u8]
+             &mut T
+             Box<T>
+             BufStream<RW>
+             Pin<P>
+             StreamType<S>
+             std::io::Cursor<T>
+             tokio::io::BufReader<R>
+           and 7 others
+note: required by a bound in `process_commands`
+  --> src/smtp/handler.rs:80:33
+   |
+73 | async fn process_commands<S>(
+   |          ---------------- required by a bound in this function
+...
+80 |     S: AsyncRead + AsyncWrite + AsyncBufRead + Unpin,
+   |                                 ^^^^^^^^^^^^ required by this bound in `process_commands`
+
+error[E0277]: the trait bound `tokio::net::TcpStream: AsyncBufRead` is not satisfied
+  --> src/smtp/handler.rs:65:95
+   |
+65 |     if let Err(e) = process_commands(stream, &mut session_state, webhook_mapping, tls_config).await
+   |                                                                                               ^^^^^ the trait `AsyncBufRead` is not implemented for `tokio::net::TcpStream`
+   |
+   = help: the following other types implement trait `AsyncBufRead`:
+             &[u8]
+             &mut T
+             Box<T>
+             BufStream<RW>
+             Pin<P>
+             StreamType<S>
+             std::io::Cursor<T>
+             tokio::io::BufReader<R>
+           and 7 others
+note: required by a bound in `process_commands`
+  --> src/smtp/handler.rs:80:33
+   |
+73 | async fn process_commands<S>(
+   |          ---------------- required by a bound in this function
+...
+80 |     S: AsyncRead + AsyncWrite + AsyncBufRead + Unpin,
+   |                                 ^^^^^^^^^^^^ required by this bound in `process_commands`
+
+error[E0599]: the method `write_all` exists for mutable reference `&mut StreamType<S>`, but its trait bounds were not satisfied
+   --> src/smtp/handler.rs:178:12
+    |
+178 |     stream.write_all(response.as_bytes()).await?;
+    |            ^^^^^^^^^ method cannot be called on `&mut StreamType<S>` due to unsatisfied trait bounds
+    |
+   ::: src/smtp/stream.rs:6:1
+    |
+6   | pub enum StreamType<S>
+    | ---------------------- doesn't satisfy `StreamType<S>: AsyncWriteExt` or `StreamType<S>: AsyncWrite`
+    |
+    = note: the following trait bounds were not satisfied:
+            `StreamType<S>: AsyncWrite`
+            which is required by `StreamType<S>: AsyncWriteExt`
+            `&mut StreamType<S>: AsyncWrite`
+            which is required by `&mut StreamType<S>: AsyncWriteExt`
+note: the trait `AsyncWrite` must be implemented
+   --> /home/shane/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tokio-1.43.0/src/io/async_write.rs:45:1
+    |
+45  | pub trait AsyncWrite {
+    | ^^^^^^^^^^^^^^^^^^^^
+    = help: items from traits can only be used if the trait is implemented and in scope
+    = note: the following traits define an item `write_all`, perhaps you need to implement one of them:
+            candidate #1: `AsyncWriteExt`
+            candidate #2: `std::io::Write`
+
+error[E0599]: the method `write_all` exists for mutable reference `&mut StreamType<S>`, but its trait bounds were not satisfied
+   --> src/smtp/handler.rs:189:10
+    |
+188 | /     stream
+189 | |         .write_all(
+    | |         -^^^^^^^^^ method cannot be called on `&mut StreamType<S>` due to unsatisfied trait bounds
+    | |_________|
+    |
+    |
+   ::: src/smtp/stream.rs:6:1
+    |
+6   |   pub enum StreamType<S>
+    |   ---------------------- doesn't satisfy `StreamType<S>: AsyncWriteExt` or `StreamType<S>: AsyncWrite`
+    |
+    = note: the following trait bounds were not satisfied:
+            `StreamType<S>: AsyncWrite`
+            which is required by `StreamType<S>: AsyncWriteExt`
+            `&mut StreamType<S>: AsyncWrite`
+            which is required by `&mut StreamType<S>: AsyncWriteExt`
+note: the trait `AsyncWrite` must be implemented
+   --> /home/shane/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tokio-1.43.0/src/io/async_write.rs:45:1
+    |
+45  | pub trait AsyncWrite {
+    | ^^^^^^^^^^^^^^^^^^^^
+    = help: items from traits can only be used if the trait is implemented and in scope
+    = note: the following traits define an item `write_all`, perhaps you need to implement one of them:
+            candidate #1: `AsyncWriteExt`
+            candidate #2: `std::io::Write`
+
+error[E0599]: the method `write_all` exists for mutable reference `&mut StreamType<S>`, but its trait bounds were not satisfied
+   --> src/smtp/handler.rs:348:12
+    |
+348 |     stream.write_all(b"250 OK\r\n").await?;
+    |            ^^^^^^^^^ method cannot be called on `&mut StreamType<S>` due to unsatisfied trait bounds
+    |
+   ::: src/smtp/stream.rs:6:1
+    |
+6   | pub enum StreamType<S>
+    | ---------------------- doesn't satisfy `StreamType<S>: AsyncWriteExt` or `StreamType<S>: AsyncWrite`
+    |
+    = note: the following trait bounds were not satisfied:
+            `StreamType<S>: AsyncWrite`
+            which is required by `StreamType<S>: AsyncWriteExt`
+            `&mut StreamType<S>: AsyncWrite`
+            which is required by `&mut StreamType<S>: AsyncWriteExt`
+note: the trait `AsyncWrite` must be implemented
+   --> /home/shane/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tokio-1.43.0/src/io/async_write.rs:45:1
+    |
+45  | pub trait AsyncWrite {
+    | ^^^^^^^^^^^^^^^^^^^^
+    = help: items from traits can only be used if the trait is implemented and in scope
+    = note: the following traits define an item `write_all`, perhaps you need to implement one of them:
+            candidate #1: `AsyncWriteExt`
+            candidate #2: `std::io::Write`
+
+error[E0599]: the method `write_all` exists for mutable reference `&mut StreamType<S>`, but its trait bounds were not satisfied
+   --> src/smtp/handler.rs:353:12
+    |
+353 |     stream.write_all(b"250 OK\r\n").await?;
+    |            ^^^^^^^^^ method cannot be called on `&mut StreamType<S>` due to unsatisfied trait bounds
+    |
+   ::: src/smtp/stream.rs:6:1
+    |
+6   | pub enum StreamType<S>
+    | ---------------------- doesn't satisfy `StreamType<S>: AsyncWriteExt` or `StreamType<S>: AsyncWrite`
+    |
+    = note: the following trait bounds were not satisfied:
+            `StreamType<S>: AsyncWrite`
+            which is required by `StreamType<S>: AsyncWriteExt`
+            `&mut StreamType<S>: AsyncWrite`
+            which is required by `&mut StreamType<S>: AsyncWriteExt`
+note: the trait `AsyncWrite` must be implemented
+   --> /home/shane/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tokio-1.43.0/src/io/async_write.rs:45:1
+    |
+45  | pub trait AsyncWrite {
+    | ^^^^^^^^^^^^^^^^^^^^
+    = help: items from traits can only be used if the trait is implemented and in scope
+    = note: the following traits define an item `write_all`, perhaps you need to implement one of them:
+            candidate #1: `AsyncWriteExt`
+            candidate #2: `std::io::Write`
+
+error[E0599]: the method `write_all` exists for mutable reference `&mut StreamType<S>`, but its trait bounds were not satisfied
+   --> src/smtp/handler.rs:273:14
+    |
+272 | /         stream
+273 | |             .write_all(b"503 Bad sequence of commands\r\n")
+    | |             -^^^^^^^^^ method cannot be called on `&mut StreamType<S>` due to unsatisfied trait bounds
+    | |_____________|
+    |
+    |
+   ::: src/smtp/stream.rs:6:1
+    |
+6   |   pub enum StreamType<S>
+    |   ---------------------- doesn't satisfy `StreamType<S>: AsyncWriteExt` or `StreamType<S>: AsyncWrite`
+    |
+    = note: the following trait bounds were not satisfied:
+            `StreamType<S>: AsyncWrite`
+            which is required by `StreamType<S>: AsyncWriteExt`
+            `&mut StreamType<S>: AsyncWrite`
+            which is required by `&mut StreamType<S>: AsyncWriteExt`
+note: the trait `AsyncWrite` must be implemented
+   --> /home/shane/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tokio-1.43.0/src/io/async_write.rs:45:1
+    |
+45  | pub trait AsyncWrite {
+    | ^^^^^^^^^^^^^^^^^^^^
+    = help: items from traits can only be used if the trait is implemented and in scope
+    = note: the following traits define an item `write_all`, perhaps you need to implement one of them:
+            candidate #1: `AsyncWriteExt`
+            candidate #2: `std::io::Write`
+
+error[E0599]: the method `write_all` exists for mutable reference `&mut StreamType<S>`, but its trait bounds were not satisfied
+   --> src/smtp/handler.rs:278:10
+    |
+277 | /     stream
+278 | |         .write_all(b"354 End data with <CR><LF>.<CR><LF>\r\n")
+    | |         -^^^^^^^^^ method cannot be called on `&mut StreamType<S>` due to unsatisfied trait bounds
+    | |_________|
+    |
+    |
+   ::: src/smtp/stream.rs:6:1
+    |
+6   |   pub enum StreamType<S>
+    |   ---------------------- doesn't satisfy `StreamType<S>: AsyncWriteExt` or `StreamType<S>: AsyncWrite`
+    |
+    = note: the following trait bounds were not satisfied:
+            `StreamType<S>: AsyncWrite`
+            which is required by `StreamType<S>: AsyncWriteExt`
+            `&mut StreamType<S>: AsyncWrite`
+            which is required by `&mut StreamType<S>: AsyncWriteExt`
+note: the trait `AsyncWrite` must be implemented
+   --> /home/shane/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tokio-1.43.0/src/io/async_write.rs:45:1
+    |
+45  | pub trait AsyncWrite {
+    | ^^^^^^^^^^^^^^^^^^^^
+    = help: items from traits can only be used if the trait is implemented and in scope
+    = note: the following traits define an item `write_all`, perhaps you need to implement one of them:
+            candidate #1: `AsyncWriteExt`
+            candidate #2: `std::io::Write`
+
+error[E0277]: the trait bound `StreamType<S>: AsyncRead` is not satisfied
+   --> src/smtp/handler.rs:281:42
+    |
+281 |     let mut reader = BufReader::new(&mut *stream);
+    |                      --------------      ^^^^^^^ the trait `AsyncRead` is not implemented for `StreamType<S>`, which is required by `&mut StreamType<S>: AsyncRead`
+    |                      |
+    |                      required by a bound introduced by this call
+    |
+    = help: the following other types implement trait `AsyncRead`:
+              &[u8]
+              &mut T
+              Box<T>
+              BufStream<RW>
+              DuplexStream
+              Pin<P>
+              SimplexStream
+              Upgraded
+            and 32 others
+    = note: required for `&mut StreamType<S>` to implement `AsyncRead`
+note: required by a bound in `tokio::io::BufReader::<R>::new`
+   --> /home/shane/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tokio-1.43.0/src/io/util/buf_reader.rs:37:9
+    |
+37  | impl<R: AsyncRead> BufReader<R> {
+    |         ^^^^^^^^^ required by this bound in `BufReader::<R>::new`
+...
+40  |     pub fn new(inner: R) -> Self {
+    |            --- required by a bound in this associated function
+
+error[E0277]: the trait bound `S: AsyncRead` is not satisfied
+   --> src/smtp/handler.rs:281:22
+    |
+281 |     let mut reader = BufReader::new(&mut *stream);
+    |                      ^^^^^^^^^^^^^^ the trait `AsyncRead` is not implemented for `S`
+    |
+note: required by a bound in `StreamType`
+   --> src/smtp/stream.rs:8:8
+    |
+6   | pub enum StreamType<S>
+    |          ---------- required by a bound in this enum
+7   | where
+8   |     S: AsyncRead + AsyncWrite + Unpin,
+    |        ^^^^^^^^^ required by this bound in `StreamType`
+help: consider restricting type parameter `S`
+    |
+266 | async fn handle_data<S: tokio::io::AsyncRead>(
+    |                       ++++++++++++++++++++++
+
+error[E0277]: the trait bound `S: AsyncWrite` is not satisfied
+   --> src/smtp/handler.rs:281:22
+    |
+281 |     let mut reader = BufReader::new(&mut *stream);
+    |                      ^^^^^^^^^^^^^^ the trait `AsyncWrite` is not implemented for `S`
+    |
+note: required by a bound in `StreamType`
+   --> src/smtp/stream.rs:8:20
+    |
+6   | pub enum StreamType<S>
+    |          ---------- required by a bound in this enum
+7   | where
+8   |     S: AsyncRead + AsyncWrite + Unpin,
+    |                    ^^^^^^^^^^ required by this bound in `StreamType`
+help: consider restricting type parameter `S`
+    |
+266 | async fn handle_data<S: tokio::io::AsyncWrite>(
+    |                       +++++++++++++++++++++++
+
+error[E0277]: `S` cannot be unpinned
+   --> src/smtp/handler.rs:281:22
+    |
+281 |     let mut reader = BufReader::new(&mut *stream);
+    |                      ^^^^^^^^^^^^^^ the trait `Unpin` is not implemented for `S`
+    |
+    = note: consider using the `pin!` macro
+            consider using `Box::pin` if you need to access the pinned value outside of the current scope
+note: required by a bound in `StreamType`
+   --> src/smtp/stream.rs:8:33
+    |
+6   | pub enum StreamType<S>
+    |          ---------- required by a bound in this enum
+7   | where
+8   |     S: AsyncRead + AsyncWrite + Unpin,
+    |                                 ^^^^^ required by this bound in `StreamType`
+help: consider restricting type parameter `S`
+    |
+266 | async fn handle_data<S: std::marker::Unpin>(
+    |                       ++++++++++++++++++++
+
+error[E0277]: the trait bound `S: AsyncRead` is not satisfied
+   --> src/smtp/handler.rs:281:22
+    |
+281 |     let mut reader = BufReader::new(&mut *stream);
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ the trait `AsyncRead` is not implemented for `S`
+    |
+note: required by a bound in `StreamType`
+   --> src/smtp/stream.rs:8:8
+    |
+6   | pub enum StreamType<S>
+    |          ---------- required by a bound in this enum
+7   | where
+8   |     S: AsyncRead + AsyncWrite + Unpin,
+    |        ^^^^^^^^^ required by this bound in `StreamType`
+help: consider restricting type parameter `S`
+    |
+266 | async fn handle_data<S: tokio::io::AsyncRead>(
+    |                       ++++++++++++++++++++++
+
+error[E0277]: the trait bound `S: AsyncWrite` is not satisfied
+   --> src/smtp/handler.rs:281:22
+    |
+281 |     let mut reader = BufReader::new(&mut *stream);
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ the trait `AsyncWrite` is not implemented for `S`
+    |
+note: required by a bound in `StreamType`
+   --> src/smtp/stream.rs:8:20
+    |
+6   | pub enum StreamType<S>
+    |          ---------- required by a bound in this enum
+7   | where
+8   |     S: AsyncRead + AsyncWrite + Unpin,
+    |                    ^^^^^^^^^^ required by this bound in `StreamType`
+help: consider restricting type parameter `S`
+    |
+266 | async fn handle_data<S: tokio::io::AsyncWrite>(
+    |                       +++++++++++++++++++++++
+
+error[E0277]: `S` cannot be unpinned
+   --> src/smtp/handler.rs:281:22
+    |
+281 |     let mut reader = BufReader::new(&mut *stream);
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ the trait `Unpin` is not implemented for `S`
+    |
+    = note: consider using the `pin!` macro
+            consider using `Box::pin` if you need to access the pinned value outside of the current scope
+note: required by a bound in `StreamType`
+   --> src/smtp/stream.rs:8:33
+    |
+6   | pub enum StreamType<S>
+    |          ---------- required by a bound in this enum
+7   | where
+8   |     S: AsyncRead + AsyncWrite + Unpin,
+    |                                 ^^^^^ required by this bound in `StreamType`
+help: consider restricting type parameter `S`
+    |
+266 | async fn handle_data<S: std::marker::Unpin>(
+    |                       ++++++++++++++++++++
+
+error[E0599]: the method `read_line` exists for struct `BufReader<&mut StreamType<S>>`, but its trait bounds were not satisfied
+   --> src/smtp/handler.rs:287:33
+    |
+287 |           let bytes_read = reader.read_line(&mut line).await?;
+    |                                   ^^^^^^^^^ method cannot be called on `BufReader<&mut StreamType<S>>` due to unsatisfied trait bounds
+    |
+   ::: /home/shane/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tokio-1.43.0/src/io/util/buf_reader.rs:10:1
+    |
+10  | / pin_project! {
+11  | |     /// The `BufReader` struct adds buffering to any reader.
+12  | |     ///
+13  | |     /// It can be excessively inefficient to work directly with a [`AsyncRead`]
+...   |
+34  | |     }
+35  | | }
+    | |_- doesn't satisfy `_: AsyncBufReadExt` or `_: AsyncBufRead`
+    |
+    = note: the following trait bounds were not satisfied:
+            `tokio::io::BufReader<&mut StreamType<S>>: AsyncBufRead`
+            which is required by `tokio::io::BufReader<&mut StreamType<S>>: AsyncBufReadExt`
+
+error[E0599]: the method `write_all` exists for mutable reference `&mut StreamType<S>`, but its trait bounds were not satisfied
+   --> src/smtp/handler.rs:297:18
+    |
+296 | /             stream
+297 | |                 .write_all(b"552 Message size exceeds maximum permitted\r\n")
+    | |                 -^^^^^^^^^ method cannot be called on `&mut StreamType<S>` due to unsatisfied trait bounds
+    | |_________________|
+    |
+    |
+   ::: src/smtp/stream.rs:6:1
+    |
+6   |   pub enum StreamType<S>
+    |   ---------------------- doesn't satisfy `StreamType<S>: AsyncWriteExt` or `StreamType<S>: AsyncWrite`
+    |
+    = note: the following trait bounds were not satisfied:
+            `StreamType<S>: AsyncWrite`
+            which is required by `StreamType<S>: AsyncWriteExt`
+            `&mut StreamType<S>: AsyncWrite`
+            which is required by `&mut StreamType<S>: AsyncWriteExt`
+note: the trait `AsyncWrite` must be implemented
+   --> /home/shane/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tokio-1.43.0/src/io/async_write.rs:45:1
+    |
+45  | pub trait AsyncWrite {
+    | ^^^^^^^^^^^^^^^^^^^^
+    = help: items from traits can only be used if the trait is implemented and in scope
+    = note: the following traits define an item `write_all`, perhaps you need to implement one of them:
+            candidate #1: `AsyncWriteExt`
+            candidate #2: `std::io::Write`
+
+error[E0599]: the method `write_all` exists for mutable reference `&mut StreamType<S>`, but its trait bounds were not satisfied
+   --> src/smtp/handler.rs:334:16
+    |
+334 |         stream.write_all(b"250 OK\r\n").await?;
+    |                ^^^^^^^^^ method cannot be called on `&mut StreamType<S>` due to unsatisfied trait bounds
+    |
+   ::: src/smtp/stream.rs:6:1
+    |
+6   | pub enum StreamType<S>
+    | ---------------------- doesn't satisfy `StreamType<S>: AsyncWriteExt` or `StreamType<S>: AsyncWrite`
+    |
+    = note: the following trait bounds were not satisfied:
+            `StreamType<S>: AsyncWrite`
+            which is required by `StreamType<S>: AsyncWriteExt`
+            `&mut StreamType<S>: AsyncWrite`
+            which is required by `&mut StreamType<S>: AsyncWriteExt`
+note: the trait `AsyncWrite` must be implemented
+   --> /home/shane/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tokio-1.43.0/src/io/async_write.rs:45:1
+    |
+45  | pub trait AsyncWrite {
+    | ^^^^^^^^^^^^^^^^^^^^
+    = help: items from traits can only be used if the trait is implemented and in scope
+    = note: the following traits define an item `write_all`, perhaps you need to implement one of them:
+            candidate #1: `AsyncWriteExt`
+            candidate #2: `std::io::Write`
+
+error[E0599]: the method `write_all` exists for mutable reference `&mut StreamType<S>`, but its trait bounds were not satisfied
+   --> src/smtp/handler.rs:337:14
+    |
+336 | /         stream
+337 | |             .write_all(b"554 Failed to process email for all recipients.\r\n")
+    | |             -^^^^^^^^^ method cannot be called on `&mut StreamType<S>` due to unsatisfied trait bounds
+    | |_____________|
+    |
+    |
+   ::: src/smtp/stream.rs:6:1
+    |
+6   |   pub enum StreamType<S>
+    |   ---------------------- doesn't satisfy `StreamType<S>: AsyncWriteExt` or `StreamType<S>: AsyncWrite`
+    |
+    = note: the following trait bounds were not satisfied:
+            `StreamType<S>: AsyncWrite`
+            which is required by `StreamType<S>: AsyncWriteExt`
+            `&mut StreamType<S>: AsyncWrite`
+            which is required by `&mut StreamType<S>: AsyncWriteExt`
+note: the trait `AsyncWrite` must be implemented
+   --> /home/shane/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tokio-1.43.0/src/io/async_write.rs:45:1
+    |
+45  | pub trait AsyncWrite {
+    | ^^^^^^^^^^^^^^^^^^^^
+    = help: items from traits can only be used if the trait is implemented and in scope
+    = note: the following traits define an item `write_all`, perhaps you need to implement one of them:
+            candidate #1: `AsyncWriteExt`
+            candidate #2: `std::io::Write`
+
+error[E0599]: the method `write_all` exists for mutable reference `&mut StreamType<S>`, but its trait bounds were not satisfied
+   --> src/smtp/handler.rs:209:14
+    |
+208 | /         stream
+209 | |             .write_all(b"501 5.5.2 Syntax error in parameters or arguments\r\n")
+    | |             -^^^^^^^^^ method cannot be called on `&mut StreamType<S>` due to unsatisfied trait bounds
+    | |_____________|
+    |
+    |
+   ::: src/smtp/stream.rs:6:1
+    |
+6   |   pub enum StreamType<S>
+    |   ---------------------- doesn't satisfy `StreamType<S>: AsyncWriteExt` or `StreamType<S>: AsyncWrite`
+    |
+    = note: the following trait bounds were not satisfied:
+            `StreamType<S>: AsyncWrite`
+            which is required by `StreamType<S>: AsyncWriteExt`
+            `&mut StreamType<S>: AsyncWrite`
+            which is required by `&mut StreamType<S>: AsyncWriteExt`
+note: the trait `AsyncWrite` must be implemented
+   --> /home/shane/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tokio-1.43.0/src/io/async_write.rs:45:1
+    |
+45  | pub trait AsyncWrite {
+    | ^^^^^^^^^^^^^^^^^^^^
+    = help: items from traits can only be used if the trait is implemented and in scope
+    = note: the following traits define an item `write_all`, perhaps you need to implement one of them:
+            candidate #1: `AsyncWriteExt`
+            candidate #2: `std::io::Write`
+
+error[E0599]: the method `write_all` exists for mutable reference `&mut StreamType<S>`, but its trait bounds were not satisfied
+   --> src/smtp/handler.rs:221:14
+    |
+220 | /         stream
+221 | |             .write_all(b"501 5.5.2 Syntax error: Empty email address\r\n")
+    | |             -^^^^^^^^^ method cannot be called on `&mut StreamType<S>` due to unsatisfied trait bounds
+    | |_____________|
+    |
+    |
+   ::: src/smtp/stream.rs:6:1
+    |
+6   |   pub enum StreamType<S>
+    |   ---------------------- doesn't satisfy `StreamType<S>: AsyncWriteExt` or `StreamType<S>: AsyncWrite`
+    |
+    = note: the following trait bounds were not satisfied:
+            `StreamType<S>: AsyncWrite`
+            which is required by `StreamType<S>: AsyncWriteExt`
+            `&mut StreamType<S>: AsyncWrite`
+            which is required by `&mut StreamType<S>: AsyncWriteExt`
+note: the trait `AsyncWrite` must be implemented
+   --> /home/shane/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tokio-1.43.0/src/io/async_write.rs:45:1
+    |
+45  | pub trait AsyncWrite {
+    | ^^^^^^^^^^^^^^^^^^^^
+    = help: items from traits can only be used if the trait is implemented and in scope
+    = note: the following traits define an item `write_all`, perhaps you need to implement one of them:
+            candidate #1: `AsyncWriteExt`
+            candidate #2: `std::io::Write`
+
+error[E0599]: the method `write_all` exists for mutable reference `&mut StreamType<S>`, but its trait bounds were not satisfied
+   --> src/smtp/handler.rs:227:12
+    |
+227 |     stream.write_all(b"250 2.1.0 OK\r\n").await?;
+    |            ^^^^^^^^^ method cannot be called on `&mut StreamType<S>` due to unsatisfied trait bounds
+    |
+   ::: src/smtp/stream.rs:6:1
+    |
+6   | pub enum StreamType<S>
+    | ---------------------- doesn't satisfy `StreamType<S>: AsyncWriteExt` or `StreamType<S>: AsyncWrite`
+    |
+    = note: the following trait bounds were not satisfied:
+            `StreamType<S>: AsyncWrite`
+            which is required by `StreamType<S>: AsyncWriteExt`
+            `&mut StreamType<S>: AsyncWrite`
+            which is required by `&mut StreamType<S>: AsyncWriteExt`
+note: the trait `AsyncWrite` must be implemented
+   --> /home/shane/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tokio-1.43.0/src/io/async_write.rs:45:1
+    |
+45  | pub trait AsyncWrite {
+    | ^^^^^^^^^^^^^^^^^^^^
+    = help: items from traits can only be used if the trait is implemented and in scope
+    = note: the following traits define an item `write_all`, perhaps you need to implement one of them:
+            candidate #1: `AsyncWriteExt`
+            candidate #2: `std::io::Write`
+
+error[E0599]: the method `write_all` exists for mutable reference `&mut StreamType<S>`, but its trait bounds were not satisfied
+   --> src/smtp/handler.rs:239:14
+    |
+238 | /         stream
+239 | |             .write_all(b"501 5.5.2 Syntax error in parameters or arguments\r\n")
+    | |             -^^^^^^^^^ method cannot be called on `&mut StreamType<S>` due to unsatisfied trait bounds
+    | |_____________|
+    |
+    |
+   ::: src/smtp/stream.rs:6:1
+    |
+6   |   pub enum StreamType<S>
+    |   ---------------------- doesn't satisfy `StreamType<S>: AsyncWriteExt` or `StreamType<S>: AsyncWrite`
+    |
+    = note: the following trait bounds were not satisfied:
+            `StreamType<S>: AsyncWrite`
+            which is required by `StreamType<S>: AsyncWriteExt`
+            `&mut StreamType<S>: AsyncWrite`
+            which is required by `&mut StreamType<S>: AsyncWriteExt`
+note: the trait `AsyncWrite` must be implemented
+   --> /home/shane/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tokio-1.43.0/src/io/async_write.rs:45:1
+    |
+45  | pub trait AsyncWrite {
+    | ^^^^^^^^^^^^^^^^^^^^
+    = help: items from traits can only be used if the trait is implemented and in scope
+    = note: the following traits define an item `write_all`, perhaps you need to implement one of them:
+            candidate #1: `AsyncWriteExt`
+            candidate #2: `std::io::Write`
+
+error[E0599]: the method `write_all` exists for mutable reference `&mut StreamType<S>`, but its trait bounds were not satisfied
+   --> src/smtp/handler.rs:252:14
+    |
+251 | /         stream
+252 | |             .write_all(b"501 5.5.2 Syntax error: Empty recipient address\r\n")
+    | |             -^^^^^^^^^ method cannot be called on `&mut StreamType<S>` due to unsatisfied trait bounds
+    | |_____________|
+    |
+    |
+   ::: src/smtp/stream.rs:6:1
+    |
+6   |   pub enum StreamType<S>
+    |   ---------------------- doesn't satisfy `StreamType<S>: AsyncWriteExt` or `StreamType<S>: AsyncWrite`
+    |
+    = note: the following trait bounds were not satisfied:
+            `StreamType<S>: AsyncWrite`
+            which is required by `StreamType<S>: AsyncWriteExt`
+            `&mut StreamType<S>: AsyncWrite`
+            which is required by `&mut StreamType<S>: AsyncWriteExt`
+note: the trait `AsyncWrite` must be implemented
+   --> /home/shane/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tokio-1.43.0/src/io/async_write.rs:45:1
+    |
+45  | pub trait AsyncWrite {
+    | ^^^^^^^^^^^^^^^^^^^^
+    = help: items from traits can only be used if the trait is implemented and in scope
+    = note: the following traits define an item `write_all`, perhaps you need to implement one of them:
+            candidate #1: `AsyncWriteExt`
+            candidate #2: `std::io::Write`
+
+error[E0599]: the method `write_all` exists for mutable reference `&mut StreamType<S>`, but its trait bounds were not satisfied
+   --> src/smtp/handler.rs:259:16
+    |
+259 |         stream.write_all(b"250 2.1.5 Recipient OK\r\n").await?;
+    |                ^^^^^^^^^ method cannot be called on `&mut StreamType<S>` due to unsatisfied trait bounds
+    |
+   ::: src/smtp/stream.rs:6:1
+    |
+6   | pub enum StreamType<S>
+    | ---------------------- doesn't satisfy `StreamType<S>: AsyncWriteExt` or `StreamType<S>: AsyncWrite`
+    |
+    = note: the following trait bounds were not satisfied:
+            `StreamType<S>: AsyncWrite`
+            which is required by `StreamType<S>: AsyncWriteExt`
+            `&mut StreamType<S>: AsyncWrite`
+            which is required by `&mut StreamType<S>: AsyncWriteExt`
+note: the trait `AsyncWrite` must be implemented
+   --> /home/shane/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tokio-1.43.0/src/io/async_write.rs:45:1
+    |
+45  | pub trait AsyncWrite {
+    | ^^^^^^^^^^^^^^^^^^^^
+    = help: items from traits can only be used if the trait is implemented and in scope
+    = note: the following traits define an item `write_all`, perhaps you need to implement one of them:
+            candidate #1: `AsyncWriteExt`
+            candidate #2: `std::io::Write`
+
+error[E0599]: the method `write_all` exists for mutable reference `&mut StreamType<S>`, but its trait bounds were not satisfied
+   --> src/smtp/handler.rs:261:16
+    |
+261 |         stream.write_all(b"550 5.7.1 Unable to relay\r\n").await?;
+    |                ^^^^^^^^^ method cannot be called on `&mut StreamType<S>` due to unsatisfied trait bounds
+    |
+   ::: src/smtp/stream.rs:6:1
+    |
+6   | pub enum StreamType<S>
+    | ---------------------- doesn't satisfy `StreamType<S>: AsyncWriteExt` or `StreamType<S>: AsyncWrite`
+    |
+    = note: the following trait bounds were not satisfied:
+            `StreamType<S>: AsyncWrite`
+            which is required by `StreamType<S>: AsyncWriteExt`
+            `&mut StreamType<S>: AsyncWrite`
+            which is required by `&mut StreamType<S>: AsyncWriteExt`
+note: the trait `AsyncWrite` must be implemented
+   --> /home/shane/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tokio-1.43.0/src/io/async_write.rs:45:1
+    |
+45  | pub trait AsyncWrite {
+    | ^^^^^^^^^^^^^^^^^^^^
+    = help: items from traits can only be used if the trait is implemented and in scope
+    = note: the following traits define an item `write_all`, perhaps you need to implement one of them:
+            candidate #1: `AsyncWriteExt`
+            candidate #2: `std::io::Write`
+
+error[E0599]: the method `write_all` exists for mutable reference `&mut StreamType<S>`, but its trait bounds were not satisfied
+   --> src/smtp/handler.rs:358:12
+    |
+358 |     stream.write_all(b"221 Bye\r\n").await?;
+    |            ^^^^^^^^^ method cannot be called on `&mut StreamType<S>` due to unsatisfied trait bounds
+    |
+   ::: src/smtp/stream.rs:6:1
+    |
+6   | pub enum StreamType<S>
+    | ---------------------- doesn't satisfy `StreamType<S>: AsyncWriteExt` or `StreamType<S>: AsyncWrite`
+    |
+    = note: the following trait bounds were not satisfied:
+            `StreamType<S>: AsyncWrite`
+            which is required by `StreamType<S>: AsyncWriteExt`
+            `&mut StreamType<S>: AsyncWrite`
+            which is required by `&mut StreamType<S>: AsyncWriteExt`
+note: the trait `AsyncWrite` must be implemented
+   --> /home/shane/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tokio-1.43.0/src/io/async_write.rs:45:1
+    |
+45  | pub trait AsyncWrite {
+    | ^^^^^^^^^^^^^^^^^^^^
+    = help: items from traits can only be used if the trait is implemented and in scope
+    = note: the following traits define an item `write_all`, perhaps you need to implement one of them:
+            candidate #1: `AsyncWriteExt`
+            candidate #2: `std::io::Write`
+
+error[E0599]: the method `write_all` exists for mutable reference `&mut StreamType<S>`, but its trait bounds were not satisfied
+   --> src/smtp/handler.rs:150:16
+    |
+150 |         stream.write_all(b"503 TLS already active\r\n").await?;
+    |                ^^^^^^^^^ method cannot be called on `&mut StreamType<S>` due to unsatisfied trait bounds
+    |
+   ::: src/smtp/stream.rs:6:1
+    |
+6   | pub enum StreamType<S>
+    | ---------------------- doesn't satisfy `StreamType<S>: AsyncWriteExt` or `StreamType<S>: AsyncWrite`
+    |
+    = note: the following trait bounds were not satisfied:
+            `StreamType<S>: AsyncWrite`
+            which is required by `StreamType<S>: AsyncWriteExt`
+            `&mut StreamType<S>: AsyncWrite`
+            which is required by `&mut StreamType<S>: AsyncWriteExt`
+note: the trait `AsyncWrite` must be implemented
+   --> /home/shane/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tokio-1.43.0/src/io/async_write.rs:45:1
+    |
+45  | pub trait AsyncWrite {
+    | ^^^^^^^^^^^^^^^^^^^^
+    = help: items from traits can only be used if the trait is implemented and in scope
+    = note: the following traits define an item `write_all`, perhaps you need to implement one of them:
+            candidate #1: `AsyncWriteExt`
+            candidate #2: `std::io::Write`
+
+error[E0277]: the trait bound `S: AsyncRead` is not satisfied
+   --> src/smtp/handler.rs:150:9
+    |
+150 |         stream.write_all(b"503 TLS already active\r\n").await?;
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ the trait `AsyncRead` is not implemented for `S`
+    |
+note: required by a bound in `StreamType`
+   --> src/smtp/stream.rs:8:8
+    |
+6   | pub enum StreamType<S>
+    |          ---------- required by a bound in this enum
+7   | where
+8   |     S: AsyncRead + AsyncWrite + Unpin,
+    |        ^^^^^^^^^ required by this bound in `StreamType`
+help: consider restricting type parameter `S`
+    |
+144 | async fn handle_starttls<S: tokio::io::AsyncRead>(
+    |                           ++++++++++++++++++++++
+
+error[E0277]: the trait bound `S: AsyncWrite` is not satisfied
+   --> src/smtp/handler.rs:150:9
+    |
+150 |         stream.write_all(b"503 TLS already active\r\n").await?;
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ the trait `AsyncWrite` is not implemented for `S`
+    |
+note: required by a bound in `StreamType`
+   --> src/smtp/stream.rs:8:20
+    |
+6   | pub enum StreamType<S>
+    |          ---------- required by a bound in this enum
+7   | where
+8   |     S: AsyncRead + AsyncWrite + Unpin,
+    |                    ^^^^^^^^^^ required by this bound in `StreamType`
+help: consider restricting type parameter `S`
+    |
+144 | async fn handle_starttls<S: tokio::io::AsyncWrite>(
+    |                           +++++++++++++++++++++++
+
+error[E0277]: `S` cannot be unpinned
+   --> src/smtp/handler.rs:150:9
+    |
+150 |         stream.write_all(b"503 TLS already active\r\n").await?;
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ the trait `Unpin` is not implemented for `S`
+    |
+    = note: consider using the `pin!` macro
+            consider using `Box::pin` if you need to access the pinned value outside of the current scope
+note: required by a bound in `StreamType`
+   --> src/smtp/stream.rs:8:33
+    |
+6   | pub enum StreamType<S>
+    |          ---------- required by a bound in this enum
+7   | where
+8   |     S: AsyncRead + AsyncWrite + Unpin,
+    |                                 ^^^^^ required by this bound in `StreamType`
+help: consider restricting type parameter `S`
+    |
+144 | async fn handle_starttls<S: std::marker::Unpin>(
+    |                           ++++++++++++++++++++
+
+error[E0277]: the trait bound `S: AsyncRead` is not satisfied
+   --> src/smtp/handler.rs:151:16
+    |
+151 |         return Err("TLS already active".into());
+    |                ^^^ the trait `AsyncRead` is not implemented for `S`
+    |
+note: required by a bound in `StreamType`
+   --> src/smtp/stream.rs:8:8
+    |
+6   | pub enum StreamType<S>
+    |          ---------- required by a bound in this enum
+7   | where
+8   |     S: AsyncRead + AsyncWrite + Unpin,
+    |        ^^^^^^^^^ required by this bound in `StreamType`
+help: consider restricting type parameter `S`
+    |
+144 | async fn handle_starttls<S: tokio::io::AsyncRead>(
+    |                           ++++++++++++++++++++++
+
+error[E0277]: the trait bound `S: AsyncWrite` is not satisfied
+   --> src/smtp/handler.rs:151:16
+    |
+151 |         return Err("TLS already active".into());
+    |                ^^^ the trait `AsyncWrite` is not implemented for `S`
+    |
+note: required by a bound in `StreamType`
+   --> src/smtp/stream.rs:8:20
+    |
+6   | pub enum StreamType<S>
+    |          ---------- required by a bound in this enum
+7   | where
+8   |     S: AsyncRead + AsyncWrite + Unpin,
+    |                    ^^^^^^^^^^ required by this bound in `StreamType`
+help: consider restricting type parameter `S`
+    |
+144 | async fn handle_starttls<S: tokio::io::AsyncWrite>(
+    |                           +++++++++++++++++++++++
+
+error[E0277]: `S` cannot be unpinned
+   --> src/smtp/handler.rs:151:16
+    |
+151 |         return Err("TLS already active".into());
+    |                ^^^ the trait `Unpin` is not implemented for `S`
+    |
+    = note: consider using the `pin!` macro
+            consider using `Box::pin` if you need to access the pinned value outside of the current scope
+note: required by a bound in `StreamType`
+   --> src/smtp/stream.rs:8:33
+    |
+6   | pub enum StreamType<S>
+    |          ---------- required by a bound in this enum
+7   | where
+8   |     S: AsyncRead + AsyncWrite + Unpin,
+    |                                 ^^^^^ required by this bound in `StreamType`
+help: consider restricting type parameter `S`
+    |
+144 | async fn handle_starttls<S: std::marker::Unpin>(
+    |                           ++++++++++++++++++++
+
+error[E0599]: the method `write_all` exists for mutable reference `&mut StreamType<S>`, but its trait bounds were not satisfied
+   --> src/smtp/handler.rs:154:12
+    |
+154 |     stream.write_all(b"220 Ready to start TLS\r\n").await?;
+    |            ^^^^^^^^^ method cannot be called on `&mut StreamType<S>` due to unsatisfied trait bounds
+    |
+   ::: src/smtp/stream.rs:6:1
+    |
+6   | pub enum StreamType<S>
+    | ---------------------- doesn't satisfy `StreamType<S>: AsyncWriteExt` or `StreamType<S>: AsyncWrite`
+    |
+    = note: the following trait bounds were not satisfied:
+            `StreamType<S>: AsyncWrite`
+            which is required by `StreamType<S>: AsyncWriteExt`
+            `&mut StreamType<S>: AsyncWrite`
+            which is required by `&mut StreamType<S>: AsyncWriteExt`
+note: the trait `AsyncWrite` must be implemented
+   --> /home/shane/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tokio-1.43.0/src/io/async_write.rs:45:1
+    |
+45  | pub trait AsyncWrite {
+    | ^^^^^^^^^^^^^^^^^^^^
+    = help: items from traits can only be used if the trait is implemented and in scope
+    = note: the following traits define an item `write_all`, perhaps you need to implement one of them:
+            candidate #1: `AsyncWriteExt`
+            candidate #2: `std::io::Write`
+
+error[E0277]: the trait bound `S: AsyncRead` is not satisfied
+   --> src/smtp/handler.rs:154:5
+    |
+154 |     stream.write_all(b"220 Ready to start TLS\r\n").await?;
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ the trait `AsyncRead` is not implemented for `S`
+    |
+note: required by a bound in `StreamType`
+   --> src/smtp/stream.rs:8:8
+    |
+6   | pub enum StreamType<S>
+    |          ---------- required by a bound in this enum
+7   | where
+8   |     S: AsyncRead + AsyncWrite + Unpin,
+    |        ^^^^^^^^^ required by this bound in `StreamType`
+help: consider restricting type parameter `S`
+    |
+144 | async fn handle_starttls<S: tokio::io::AsyncRead>(
+    |                           ++++++++++++++++++++++
+
+error[E0277]: the trait bound `S: AsyncWrite` is not satisfied
+   --> src/smtp/handler.rs:154:5
+    |
+154 |     stream.write_all(b"220 Ready to start TLS\r\n").await?;
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ the trait `AsyncWrite` is not implemented for `S`
+    |
+note: required by a bound in `StreamType`
+   --> src/smtp/stream.rs:8:20
+    |
+6   | pub enum StreamType<S>
+    |          ---------- required by a bound in this enum
+7   | where
+8   |     S: AsyncRead + AsyncWrite + Unpin,
+    |                    ^^^^^^^^^^ required by this bound in `StreamType`
+help: consider restricting type parameter `S`
+    |
+144 | async fn handle_starttls<S: tokio::io::AsyncWrite>(
+    |                           +++++++++++++++++++++++
+
+error[E0277]: `S` cannot be unpinned
+   --> src/smtp/handler.rs:154:5
+    |
+154 |     stream.write_all(b"220 Ready to start TLS\r\n").await?;
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ the trait `Unpin` is not implemented for `S`
+    |
+    = note: consider using the `pin!` macro
+            consider using `Box::pin` if you need to access the pinned value outside of the current scope
+note: required by a bound in `StreamType`
+   --> src/smtp/stream.rs:8:33
+    |
+6   | pub enum StreamType<S>
+    |          ---------- required by a bound in this enum
+7   | where
+8   |     S: AsyncRead + AsyncWrite + Unpin,
+    |                                 ^^^^^ required by this bound in `StreamType`
+help: consider restricting type parameter `S`
+    |
+144 | async fn handle_starttls<S: std::marker::Unpin>(
+    |                           ++++++++++++++++++++
+
+error[E0277]: the trait bound `StreamType<S>: AsyncRead` is not satisfied
+   --> src/smtp/handler.rs:157:27
+    |
+157 |     match acceptor.accept(stream).await {
+    |                    ------ ^^^^^^ the trait `AsyncRead` is not implemented for `StreamType<S>`, which is required by `&mut StreamType<S>: AsyncRead`
+    |                    |
+    |                    required by a bound introduced by this call
+    |
+    = help: the following other types implement trait `AsyncRead`:
+              &[u8]
+              &mut T
+              Box<T>
+              BufStream<RW>
+              DuplexStream
+              Pin<P>
+              SimplexStream
+              Upgraded
+            and 32 others
+    = note: required for `&mut StreamType<S>` to implement `AsyncRead`
+note: required by a bound in `TlsAcceptor::accept`
+   --> /home/shane/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tokio-rustls-0.26.1/src/lib.rs:162:13
+    |
+160 |     pub fn accept<IO>(&self, stream: IO) -> Accept<IO>
+    |            ------ required by a bound in this associated function
+161 |     where
+162 |         IO: AsyncRead + AsyncWrite + Unpin,
+    |             ^^^^^^^^^ required by this bound in `TlsAcceptor::accept`
+
+error[E0277]: the trait bound `S: AsyncRead` is not satisfied
+   --> src/smtp/handler.rs:157:11
+    |
+157 |     match acceptor.accept(stream).await {
+    |           ^^^^^^^^^^^^^^^^^^^^^^^ the trait `AsyncRead` is not implemented for `S`
+    |
+note: required by a bound in `StreamType`
+   --> src/smtp/stream.rs:8:8
+    |
+6   | pub enum StreamType<S>
+    |          ---------- required by a bound in this enum
+7   | where
+8   |     S: AsyncRead + AsyncWrite + Unpin,
+    |        ^^^^^^^^^ required by this bound in `StreamType`
+help: consider restricting type parameter `S`
+    |
+144 | async fn handle_starttls<S: tokio::io::AsyncRead>(
+    |                           ++++++++++++++++++++++
+
+error[E0277]: the trait bound `S: AsyncWrite` is not satisfied
+   --> src/smtp/handler.rs:157:11
+    |
+157 |     match acceptor.accept(stream).await {
+    |           ^^^^^^^^^^^^^^^^^^^^^^^ the trait `AsyncWrite` is not implemented for `S`
+    |
+note: required by a bound in `StreamType`
+   --> src/smtp/stream.rs:8:20
+    |
+6   | pub enum StreamType<S>
+    |          ---------- required by a bound in this enum
+7   | where
+8   |     S: AsyncRead + AsyncWrite + Unpin,
+    |                    ^^^^^^^^^^ required by this bound in `StreamType`
+help: consider restricting type parameter `S`
+    |
+144 | async fn handle_starttls<S: tokio::io::AsyncWrite>(
+    |                           +++++++++++++++++++++++
+
+error[E0277]: `S` cannot be unpinned
+   --> src/smtp/handler.rs:157:11
+    |
+157 |     match acceptor.accept(stream).await {
+    |           ^^^^^^^^^^^^^^^^^^^^^^^ the trait `Unpin` is not implemented for `S`
+    |
+    = note: consider using the `pin!` macro
+            consider using `Box::pin` if you need to access the pinned value outside of the current scope
+note: required by a bound in `StreamType`
+   --> src/smtp/stream.rs:8:33
+    |
+6   | pub enum StreamType<S>
+    |          ---------- required by a bound in this enum
+7   | where
+8   |     S: AsyncRead + AsyncWrite + Unpin,
+    |                                 ^^^^^ required by this bound in `StreamType`
+help: consider restricting type parameter `S`
+    |
+144 | async fn handle_starttls<S: std::marker::Unpin>(
+    |                           ++++++++++++++++++++
+
+error[E0277]: the trait bound `StreamType<S>: AsyncRead` is not satisfied
+   --> src/smtp/handler.rs:157:35
+    |
+157 |     match acceptor.accept(stream).await {
+    |                                  -^^^^^
+    |                                  ||
+    |                                  |the trait `AsyncRead` is not implemented for `StreamType<S>`, which is required by `Accept<&mut StreamType<S>>: IntoFuture`
+    |                                  help: remove the `.await`
+    |
+    = help: the following other types implement trait `AsyncRead`:
+              &[u8]
+              &mut T
+              Box<T>
+              BufStream<RW>
+              DuplexStream
+              Pin<P>
+              SimplexStream
+              Upgraded
+            and 32 others
+    = note: required for `&mut StreamType<S>` to implement `AsyncRead`
+    = note: required for `Accept<&mut StreamType<S>>` to implement `Future`
+    = note: required for `Accept<&mut StreamType<S>>` to implement `IntoFuture`
+
+error[E0277]: the trait bound `S: AsyncRead` is not satisfied
+   --> src/smtp/handler.rs:157:35
+    |
+157 |     match acceptor.accept(stream).await {
+    |                                   ^^^^^ the trait `AsyncRead` is not implemented for `S`
+    |
+note: required by a bound in `StreamType`
+   --> src/smtp/stream.rs:8:8
+    |
+6   | pub enum StreamType<S>
+    |          ---------- required by a bound in this enum
+7   | where
+8   |     S: AsyncRead + AsyncWrite + Unpin,
+    |        ^^^^^^^^^ required by this bound in `StreamType`
+help: consider restricting type parameter `S`
+    |
+144 | async fn handle_starttls<S: tokio::io::AsyncRead>(
+    |                           ++++++++++++++++++++++
+
+error[E0277]: the trait bound `S: AsyncWrite` is not satisfied
+   --> src/smtp/handler.rs:157:35
+    |
+157 |     match acceptor.accept(stream).await {
+    |                                   ^^^^^ the trait `AsyncWrite` is not implemented for `S`
+    |
+note: required by a bound in `StreamType`
+   --> src/smtp/stream.rs:8:20
+    |
+6   | pub enum StreamType<S>
+    |          ---------- required by a bound in this enum
+7   | where
+8   |     S: AsyncRead + AsyncWrite + Unpin,
+    |                    ^^^^^^^^^^ required by this bound in `StreamType`
+help: consider restricting type parameter `S`
+    |
+144 | async fn handle_starttls<S: tokio::io::AsyncWrite>(
+    |                           +++++++++++++++++++++++
+
+error[E0277]: `S` cannot be unpinned
+   --> src/smtp/handler.rs:157:35
+    |
+157 |     match acceptor.accept(stream).await {
+    |                                   ^^^^^ the trait `Unpin` is not implemented for `S`
+    |
+    = note: consider using the `pin!` macro
+            consider using `Box::pin` if you need to access the pinned value outside of the current scope
+note: required by a bound in `StreamType`
+   --> src/smtp/stream.rs:8:33
+    |
+6   | pub enum StreamType<S>
+    |          ---------- required by a bound in this enum
+7   | where
+8   |     S: AsyncRead + AsyncWrite + Unpin,
+    |                                 ^^^^^ required by this bound in `StreamType`
+help: consider restricting type parameter `S`
+    |
+144 | async fn handle_starttls<S: std::marker::Unpin>(
+    |                           ++++++++++++++++++++
+
+error[E0308]: mismatched types
+   --> src/smtp/handler.rs:160:47
+    |
+144 | async fn handle_starttls<S>(
+    |                          - expected this type parameter
+...
+160 |             Ok(StreamType::Tls(BufReader::new(tls_stream)))
+    |                                -------------- ^^^^^^^^^^ expected `TlsStream<S>`, found `TlsStream<&mut StreamType<S>>`
+    |                                |
+    |                                arguments to this function are incorrect
+    |
+    = note: expected struct `tokio_rustls::server::TlsStream<S>`
+               found struct `tokio_rustls::server::TlsStream<&mut StreamType<S>>`
+note: associated function defined here
+   --> /home/shane/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tokio-1.43.0/src/io/util/buf_reader.rs:40:12
+    |
+40  |     pub fn new(inner: R) -> Self {
+    |            ^^^
+
+error[E0277]: the trait bound `S: AsyncRead` is not satisfied
+   --> src/smtp/handler.rs:160:32
+    |
+160 |             Ok(StreamType::Tls(BufReader::new(tls_stream)))
+    |                --------------- ^^^^^^^^^^^^^^^^^^^^^^^^^^ the trait `AsyncRead` is not implemented for `S`
+    |                |
+    |                required by a bound introduced by this call
+    |
+note: required by a bound in `StreamType::Tls`
+   --> src/smtp/stream.rs:8:8
+    |
+8   |     S: AsyncRead + AsyncWrite + Unpin,
+    |        ^^^^^^^^^ required by this bound in `StreamType::Tls`
+...
+11  |     Tls(BufReader<TlsStream<S>>),
+    |     --- required by a bound in this tuple variant
+help: consider restricting type parameter `S`
+    |
+144 | async fn handle_starttls<S: tokio::io::AsyncRead>(
+    |                           ++++++++++++++++++++++
+
+error[E0277]: the trait bound `S: AsyncWrite` is not satisfied
+   --> src/smtp/handler.rs:160:32
+    |
+160 |             Ok(StreamType::Tls(BufReader::new(tls_stream)))
+    |                --------------- ^^^^^^^^^^^^^^^^^^^^^^^^^^ the trait `AsyncWrite` is not implemented for `S`
+    |                |
+    |                required by a bound introduced by this call
+    |
+note: required by a bound in `StreamType::Tls`
+   --> src/smtp/stream.rs:8:20
+    |
+8   |     S: AsyncRead + AsyncWrite + Unpin,
+    |                    ^^^^^^^^^^ required by this bound in `StreamType::Tls`
+...
+11  |     Tls(BufReader<TlsStream<S>>),
+    |     --- required by a bound in this tuple variant
+help: consider restricting type parameter `S`
+    |
+144 | async fn handle_starttls<S: tokio::io::AsyncWrite>(
+    |                           +++++++++++++++++++++++
+
+error[E0277]: `S` cannot be unpinned
+   --> src/smtp/handler.rs:160:32
+    |
+160 |             Ok(StreamType::Tls(BufReader::new(tls_stream)))
+    |                --------------- ^^^^^^^^^^^^^^^^^^^^^^^^^^ the trait `Unpin` is not implemented for `S`
+    |                |
+    |                required by a bound introduced by this call
+    |
+    = note: consider using the `pin!` macro
+            consider using `Box::pin` if you need to access the pinned value outside of the current scope
+note: required by a bound in `StreamType::Tls`
+   --> src/smtp/stream.rs:8:33
+    |
+8   |     S: AsyncRead + AsyncWrite + Unpin,
+    |                                 ^^^^^ required by this bound in `StreamType::Tls`
+...
+11  |     Tls(BufReader<TlsStream<S>>),
+    |     --- required by a bound in this tuple variant
+help: consider restricting type parameter `S`
+    |
+144 | async fn handle_starttls<S: std::marker::Unpin>(
+    |                           ++++++++++++++++++++
+
+error[E0277]: the trait bound `S: AsyncRead` is not satisfied
+   --> src/smtp/handler.rs:160:47
+    |
+160 |             Ok(StreamType::Tls(BufReader::new(tls_stream)))
+    |                                -------------- ^^^^^^^^^^ the trait `AsyncRead` is not implemented for `S`, which is required by `tokio_rustls::server::TlsStream<S>: AsyncRead`
+    |                                |
+    |                                required by a bound introduced by this call
+    |
+    = note: required for `tokio_rustls::server::TlsStream<S>` to implement `AsyncRead`
+note: required by a bound in `tokio::io::BufReader::<R>::new`
+   --> /home/shane/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tokio-1.43.0/src/io/util/buf_reader.rs:37:9
+    |
+37  | impl<R: AsyncRead> BufReader<R> {
+    |         ^^^^^^^^^ required by this bound in `BufReader::<R>::new`
+...
+40  |     pub fn new(inner: R) -> Self {
+    |            --- required by a bound in this associated function
+help: consider restricting type parameter `S`
+    |
+144 | async fn handle_starttls<S: tokio::io::AsyncRead>(
+    |                           ++++++++++++++++++++++
+
+error[E0277]: the trait bound `S: AsyncWrite` is not satisfied
+   --> src/smtp/handler.rs:160:47
+    |
+160 |             Ok(StreamType::Tls(BufReader::new(tls_stream)))
+    |                                -------------- ^^^^^^^^^^ the trait `AsyncWrite` is not implemented for `S`, which is required by `tokio_rustls::server::TlsStream<S>: AsyncRead`
+    |                                |
+    |                                required by a bound introduced by this call
+    |
+    = note: required for `tokio_rustls::server::TlsStream<S>` to implement `AsyncRead`
+note: required by a bound in `tokio::io::BufReader::<R>::new`
+   --> /home/shane/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tokio-1.43.0/src/io/util/buf_reader.rs:37:9
+    |
+37  | impl<R: AsyncRead> BufReader<R> {
+    |         ^^^^^^^^^ required by this bound in `BufReader::<R>::new`
+...
+40  |     pub fn new(inner: R) -> Self {
+    |            --- required by a bound in this associated function
+help: consider restricting type parameter `S`
+    |
+144 | async fn handle_starttls<S: tokio::io::AsyncWrite>(
+    |                           +++++++++++++++++++++++
+
+error[E0277]: `S` cannot be unpinned
+   --> src/smtp/handler.rs:160:47
+    |
+160 |             Ok(StreamType::Tls(BufReader::new(tls_stream)))
+    |                                -------------- ^^^^^^^^^^ the trait `Unpin` is not implemented for `S`, which is required by `tokio_rustls::server::TlsStream<S>: AsyncRead`
+    |                                |
+    |                                required by a bound introduced by this call
+    |
+    = note: consider using the `pin!` macro
+            consider using `Box::pin` if you need to access the pinned value outside of the current scope
+    = note: required for `tokio_rustls::server::TlsStream<S>` to implement `AsyncRead`
+note: required by a bound in `tokio::io::BufReader::<R>::new`
+   --> /home/shane/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tokio-1.43.0/src/io/util/buf_reader.rs:37:9
+    |
+37  | impl<R: AsyncRead> BufReader<R> {
+    |         ^^^^^^^^^ required by this bound in `BufReader::<R>::new`
+...
+40  |     pub fn new(inner: R) -> Self {
+    |            --- required by a bound in this associated function
+help: consider restricting type parameter `S`
+    |
+144 | async fn handle_starttls<S: std::marker::Unpin>(
+    |                           ++++++++++++++++++++
+
+error[E0277]: the trait bound `S: AsyncRead` is not satisfied
+   --> src/smtp/handler.rs:160:13
+    |
+160 |             Ok(StreamType::Tls(BufReader::new(tls_stream)))
+    |             ^^ the trait `AsyncRead` is not implemented for `S`
+    |
+note: required by a bound in `StreamType`
+   --> src/smtp/stream.rs:8:8
+    |
+6   | pub enum StreamType<S>
+    |          ---------- required by a bound in this enum
+7   | where
+8   |     S: AsyncRead + AsyncWrite + Unpin,
+    |        ^^^^^^^^^ required by this bound in `StreamType`
+help: consider restricting type parameter `S`
+    |
+144 | async fn handle_starttls<S: tokio::io::AsyncRead>(
+    |                           ++++++++++++++++++++++
+
+error[E0277]: the trait bound `S: AsyncWrite` is not satisfied
+   --> src/smtp/handler.rs:160:13
+    |
+160 |             Ok(StreamType::Tls(BufReader::new(tls_stream)))
+    |             ^^ the trait `AsyncWrite` is not implemented for `S`
+    |
+note: required by a bound in `StreamType`
+   --> src/smtp/stream.rs:8:20
+    |
+6   | pub enum StreamType<S>
+    |          ---------- required by a bound in this enum
+7   | where
+8   |     S: AsyncRead + AsyncWrite + Unpin,
+    |                    ^^^^^^^^^^ required by this bound in `StreamType`
+help: consider restricting type parameter `S`
+    |
+144 | async fn handle_starttls<S: tokio::io::AsyncWrite>(
+    |                           +++++++++++++++++++++++
+
+error[E0277]: `S` cannot be unpinned
+   --> src/smtp/handler.rs:160:13
+    |
+160 |             Ok(StreamType::Tls(BufReader::new(tls_stream)))
+    |             ^^ the trait `Unpin` is not implemented for `S`
+    |
+    = note: consider using the `pin!` macro
+            consider using `Box::pin` if you need to access the pinned value outside of the current scope
+note: required by a bound in `StreamType`
+   --> src/smtp/stream.rs:8:33
+    |
+6   | pub enum StreamType<S>
+    |          ---------- required by a bound in this enum
+7   | where
+8   |     S: AsyncRead + AsyncWrite + Unpin,
+    |                                 ^^^^^ required by this bound in `StreamType`
+help: consider restricting type parameter `S`
+    |
+144 | async fn handle_starttls<S: std::marker::Unpin>(
+    |                           ++++++++++++++++++++
+
+error[E0277]: the trait bound `S: AsyncRead` is not satisfied
+   --> src/smtp/handler.rs:160:13
+    |
+160 |             Ok(StreamType::Tls(BufReader::new(tls_stream)))
+    |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ the trait `AsyncRead` is not implemented for `S`
+    |
+note: required by a bound in `StreamType`
+   --> src/smtp/stream.rs:8:8
+    |
+6   | pub enum StreamType<S>
+    |          ---------- required by a bound in this enum
+7   | where
+8   |     S: AsyncRead + AsyncWrite + Unpin,
+    |        ^^^^^^^^^ required by this bound in `StreamType`
+help: consider restricting type parameter `S`
+    |
+144 | async fn handle_starttls<S: tokio::io::AsyncRead>(
+    |                           ++++++++++++++++++++++
+
+error[E0277]: the trait bound `S: AsyncWrite` is not satisfied
+   --> src/smtp/handler.rs:160:13
+    |
+160 |             Ok(StreamType::Tls(BufReader::new(tls_stream)))
+    |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ the trait `AsyncWrite` is not implemented for `S`
+    |
+note: required by a bound in `StreamType`
+   --> src/smtp/stream.rs:8:20
+    |
+6   | pub enum StreamType<S>
+    |          ---------- required by a bound in this enum
+7   | where
+8   |     S: AsyncRead + AsyncWrite + Unpin,
+    |                    ^^^^^^^^^^ required by this bound in `StreamType`
+help: consider restricting type parameter `S`
+    |
+144 | async fn handle_starttls<S: tokio::io::AsyncWrite>(
+    |                           +++++++++++++++++++++++
+
+error[E0277]: `S` cannot be unpinned
+   --> src/smtp/handler.rs:160:13
+    |
+160 |             Ok(StreamType::Tls(BufReader::new(tls_stream)))
+    |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ the trait `Unpin` is not implemented for `S`
+    |
+    = note: consider using the `pin!` macro
+            consider using `Box::pin` if you need to access the pinned value outside of the current scope
+note: required by a bound in `StreamType`
+   --> src/smtp/stream.rs:8:33
+    |
+6   | pub enum StreamType<S>
+    |          ---------- required by a bound in this enum
+7   | where
+8   |     S: AsyncRead + AsyncWrite + Unpin,
+    |                                 ^^^^^ required by this bound in `StreamType`
+help: consider restricting type parameter `S`
+    |
+144 | async fn handle_starttls<S: std::marker::Unpin>(
+    |                           ++++++++++++++++++++
+
+error[E0277]: the trait bound `S: AsyncRead` is not satisfied
+   --> src/smtp/handler.rs:164:13
+    |
+164 |             Err("454 TLS not available due to temporary error".into())
+    |             ^^^ the trait `AsyncRead` is not implemented for `S`
+    |
+note: required by a bound in `StreamType`
+   --> src/smtp/stream.rs:8:8
+    |
+6   | pub enum StreamType<S>
+    |          ---------- required by a bound in this enum
+7   | where
+8   |     S: AsyncRead + AsyncWrite + Unpin,
+    |        ^^^^^^^^^ required by this bound in `StreamType`
+help: consider restricting type parameter `S`
+    |
+144 | async fn handle_starttls<S: tokio::io::AsyncRead>(
+    |                           ++++++++++++++++++++++
+
+error[E0277]: the trait bound `S: AsyncWrite` is not satisfied
+   --> src/smtp/handler.rs:164:13
+    |
+164 |             Err("454 TLS not available due to temporary error".into())
+    |             ^^^ the trait `AsyncWrite` is not implemented for `S`
+    |
+note: required by a bound in `StreamType`
+   --> src/smtp/stream.rs:8:20
+    |
+6   | pub enum StreamType<S>
+    |          ---------- required by a bound in this enum
+7   | where
+8   |     S: AsyncRead + AsyncWrite + Unpin,
+    |                    ^^^^^^^^^^ required by this bound in `StreamType`
+help: consider restricting type parameter `S`
+    |
+144 | async fn handle_starttls<S: tokio::io::AsyncWrite>(
+    |                           +++++++++++++++++++++++
+
+error[E0277]: `S` cannot be unpinned
+   --> src/smtp/handler.rs:164:13
+    |
+164 |             Err("454 TLS not available due to temporary error".into())
+    |             ^^^ the trait `Unpin` is not implemented for `S`
+    |
+    = note: consider using the `pin!` macro
+            consider using `Box::pin` if you need to access the pinned value outside of the current scope
+note: required by a bound in `StreamType`
+   --> src/smtp/stream.rs:8:33
+    |
+6   | pub enum StreamType<S>
+    |          ---------- required by a bound in this enum
+7   | where
+8   |     S: AsyncRead + AsyncWrite + Unpin,
+    |                                 ^^^^^ required by this bound in `StreamType`
+help: consider restricting type parameter `S`
+    |
+144 | async fn handle_starttls<S: std::marker::Unpin>(
+    |                           ++++++++++++++++++++
+
+error[E0277]: the trait bound `S: AsyncRead` is not satisfied
+   --> src/smtp/handler.rs:144:1
+    |
+144 | / async fn handle_starttls<S>(
+145 | |     stream: &mut StreamType<S>,
+146 | |     state: &mut SessionState,
+147 | |     tls_config: Arc<ServerConfig>,
+148 | | ) -> Result<StreamType<S>, Box<dyn std::error::Error>> {
+    | |______________________________________________________^ the trait `AsyncRead` is not implemented for `S`
+    |
+note: required by a bound in `StreamType`
+   --> src/smtp/stream.rs:8:8
+    |
+6   | pub enum StreamType<S>
+    |          ---------- required by a bound in this enum
+7   | where
+8   |     S: AsyncRead + AsyncWrite + Unpin,
+    |        ^^^^^^^^^ required by this bound in `StreamType`
+help: consider restricting type parameter `S`
+    |
+144 | async fn handle_starttls<S: tokio::io::AsyncRead>(
+    |                           ++++++++++++++++++++++
+
+error[E0277]: the trait bound `S: AsyncWrite` is not satisfied
+   --> src/smtp/handler.rs:144:1
+    |
+144 | / async fn handle_starttls<S>(
+145 | |     stream: &mut StreamType<S>,
+146 | |     state: &mut SessionState,
+147 | |     tls_config: Arc<ServerConfig>,
+148 | | ) -> Result<StreamType<S>, Box<dyn std::error::Error>> {
+    | |______________________________________________________^ the trait `AsyncWrite` is not implemented for `S`
+    |
+note: required by a bound in `StreamType`
+   --> src/smtp/stream.rs:8:20
+    |
+6   | pub enum StreamType<S>
+    |          ---------- required by a bound in this enum
+7   | where
+8   |     S: AsyncRead + AsyncWrite + Unpin,
+    |                    ^^^^^^^^^^ required by this bound in `StreamType`
+help: consider restricting type parameter `S`
+    |
+144 | async fn handle_starttls<S: tokio::io::AsyncWrite>(
+    |                           +++++++++++++++++++++++
+
+error[E0277]: `S` cannot be unpinned
+   --> src/smtp/handler.rs:144:1
+    |
+144 | / async fn handle_starttls<S>(
+145 | |     stream: &mut StreamType<S>,
+146 | |     state: &mut SessionState,
+147 | |     tls_config: Arc<ServerConfig>,
+148 | | ) -> Result<StreamType<S>, Box<dyn std::error::Error>> {
+    | |______________________________________________________^ the trait `Unpin` is not implemented for `S`
+    |
+    = note: consider using the `pin!` macro
+            consider using `Box::pin` if you need to access the pinned value outside of the current scope
+note: required by a bound in `StreamType`
+   --> src/smtp/stream.rs:8:33
+    |
+6   | pub enum StreamType<S>
+    |          ---------- required by a bound in this enum
+7   | where
+8   |     S: AsyncRead + AsyncWrite + Unpin,
+    |                                 ^^^^^ required by this bound in `StreamType`
+help: consider restricting type parameter `S`
+    |
+144 | async fn handle_starttls<S: std::marker::Unpin>(
+    |                           ++++++++++++++++++++
+
+error[E0277]: the trait bound `S: AsyncRead` is not satisfied
+   --> src/smtp/handler.rs:145:18
+    |
+145 |     stream: &mut StreamType<S>,
+    |                  ^^^^^^^^^^^^^ the trait `AsyncRead` is not implemented for `S`
+    |
+note: required by a bound in `StreamType`
+   --> src/smtp/stream.rs:8:8
+    |
+6   | pub enum StreamType<S>
+    |          ---------- required by a bound in this enum
+7   | where
+8   |     S: AsyncRead + AsyncWrite + Unpin,
+    |        ^^^^^^^^^ required by this bound in `StreamType`
+help: consider restricting type parameter `S`
+    |
+144 | async fn handle_starttls<S: tokio::io::AsyncRead>(
+    |                           ++++++++++++++++++++++
+
+error[E0277]: the trait bound `S: AsyncWrite` is not satisfied
+   --> src/smtp/handler.rs:145:18
+    |
+145 |     stream: &mut StreamType<S>,
+    |                  ^^^^^^^^^^^^^ the trait `AsyncWrite` is not implemented for `S`
+    |
+note: required by a bound in `StreamType`
+   --> src/smtp/stream.rs:8:20
+    |
+6   | pub enum StreamType<S>
+    |          ---------- required by a bound in this enum
+7   | where
+8   |     S: AsyncRead + AsyncWrite + Unpin,
+    |                    ^^^^^^^^^^ required by this bound in `StreamType`
+help: consider restricting type parameter `S`
+    |
+144 | async fn handle_starttls<S: tokio::io::AsyncWrite>(
+    |                           +++++++++++++++++++++++
+
+error[E0277]: `S` cannot be unpinned
+   --> src/smtp/handler.rs:145:18
+    |
+145 |     stream: &mut StreamType<S>,
+    |                  ^^^^^^^^^^^^^ the trait `Unpin` is not implemented for `S`
+    |
+    = note: consider using the `pin!` macro
+            consider using `Box::pin` if you need to access the pinned value outside of the current scope
+note: required by a bound in `StreamType`
+   --> src/smtp/stream.rs:8:33
+    |
+6   | pub enum StreamType<S>
+    |          ---------- required by a bound in this enum
+7   | where
+8   |     S: AsyncRead + AsyncWrite + Unpin,
+    |                                 ^^^^^ required by this bound in `StreamType`
+help: consider restricting type parameter `S`
+    |
+144 | async fn handle_starttls<S: std::marker::Unpin>(
+    |                           ++++++++++++++++++++
+
+error[E0277]: the trait bound `S: AsyncRead` is not satisfied
+   --> src/smtp/handler.rs:170:18
+    |
+170 |     stream: &mut StreamType<S>,
+    |                  ^^^^^^^^^^^^^ the trait `AsyncRead` is not implemented for `S`
+    |
+note: required by a bound in `StreamType`
+   --> src/smtp/stream.rs:8:8
+    |
+6   | pub enum StreamType<S>
+    |          ---------- required by a bound in this enum
+7   | where
+8   |     S: AsyncRead + AsyncWrite + Unpin,
+    |        ^^^^^^^^^ required by this bound in `StreamType`
+help: consider restricting type parameter `S`
+    |
+169 | async fn handle_helo<S: tokio::io::AsyncRead>(
+    |                       ++++++++++++++++++++++
+
+error[E0277]: the trait bound `S: AsyncWrite` is not satisfied
+   --> src/smtp/handler.rs:170:18
+    |
+170 |     stream: &mut StreamType<S>,
+    |                  ^^^^^^^^^^^^^ the trait `AsyncWrite` is not implemented for `S`
+    |
+note: required by a bound in `StreamType`
+   --> src/smtp/stream.rs:8:20
+    |
+6   | pub enum StreamType<S>
+    |          ---------- required by a bound in this enum
+7   | where
+8   |     S: AsyncRead + AsyncWrite + Unpin,
+    |                    ^^^^^^^^^^ required by this bound in `StreamType`
+help: consider restricting type parameter `S`
+    |
+169 | async fn handle_helo<S: tokio::io::AsyncWrite>(
+    |                       +++++++++++++++++++++++
+
+error[E0277]: `S` cannot be unpinned
+   --> src/smtp/handler.rs:170:18
+    |
+170 |     stream: &mut StreamType<S>,
+    |                  ^^^^^^^^^^^^^ the trait `Unpin` is not implemented for `S`
+    |
+    = note: consider using the `pin!` macro
+            consider using `Box::pin` if you need to access the pinned value outside of the current scope
+note: required by a bound in `StreamType`
+   --> src/smtp/stream.rs:8:33
+    |
+6   | pub enum StreamType<S>
+    |          ---------- required by a bound in this enum
+7   | where
+8   |     S: AsyncRead + AsyncWrite + Unpin,
+    |                                 ^^^^^ required by this bound in `StreamType`
+help: consider restricting type parameter `S`
+    |
+169 | async fn handle_helo<S: std::marker::Unpin>(
+    |                       ++++++++++++++++++++
+
+error[E0277]: the trait bound `S: AsyncRead` is not satisfied
+   --> src/smtp/handler.rs:183:18
+    |
+183 |     stream: &mut StreamType<S>,
+    |                  ^^^^^^^^^^^^^ the trait `AsyncRead` is not implemented for `S`
+    |
+note: required by a bound in `StreamType`
+   --> src/smtp/stream.rs:8:8
+    |
+6   | pub enum StreamType<S>
+    |          ---------- required by a bound in this enum
+7   | where
+8   |     S: AsyncRead + AsyncWrite + Unpin,
+    |        ^^^^^^^^^ required by this bound in `StreamType`
+help: consider restricting type parameter `S`
+    |
+182 | async fn handle_ehlo<S: tokio::io::AsyncRead>(
+    |                       ++++++++++++++++++++++
+
+error[E0277]: the trait bound `S: AsyncWrite` is not satisfied
+   --> src/smtp/handler.rs:183:18
+    |
+183 |     stream: &mut StreamType<S>,
+    |                  ^^^^^^^^^^^^^ the trait `AsyncWrite` is not implemented for `S`
+    |
+note: required by a bound in `StreamType`
+   --> src/smtp/stream.rs:8:20
+    |
+6   | pub enum StreamType<S>
+    |          ---------- required by a bound in this enum
+7   | where
+8   |     S: AsyncRead + AsyncWrite + Unpin,
+    |                    ^^^^^^^^^^ required by this bound in `StreamType`
+help: consider restricting type parameter `S`
+    |
+182 | async fn handle_ehlo<S: tokio::io::AsyncWrite>(
+    |                       +++++++++++++++++++++++
+
+error[E0277]: `S` cannot be unpinned
+   --> src/smtp/handler.rs:183:18
+    |
+183 |     stream: &mut StreamType<S>,
+    |                  ^^^^^^^^^^^^^ the trait `Unpin` is not implemented for `S`
+    |
+    = note: consider using the `pin!` macro
+            consider using `Box::pin` if you need to access the pinned value outside of the current scope
+note: required by a bound in `StreamType`
+   --> src/smtp/stream.rs:8:33
+    |
+6   | pub enum StreamType<S>
+    |          ---------- required by a bound in this enum
+7   | where
+8   |     S: AsyncRead + AsyncWrite + Unpin,
+    |                                 ^^^^^ required by this bound in `StreamType`
+help: consider restricting type parameter `S`
+    |
+182 | async fn handle_ehlo<S: std::marker::Unpin>(
+    |                       ++++++++++++++++++++
+
+error[E0277]: the trait bound `S: AsyncRead` is not satisfied
+   --> src/smtp/handler.rs:203:18
+    |
+203 |     stream: &mut StreamType<S>,
+    |                  ^^^^^^^^^^^^^ the trait `AsyncRead` is not implemented for `S`
+    |
+note: required by a bound in `StreamType`
+   --> src/smtp/stream.rs:8:8
+    |
+6   | pub enum StreamType<S>
+    |          ---------- required by a bound in this enum
+7   | where
+8   |     S: AsyncRead + AsyncWrite + Unpin,
+    |        ^^^^^^^^^ required by this bound in `StreamType`
+help: consider restricting type parameter `S`
+    |
+202 | async fn handle_mail_from<S: tokio::io::AsyncRead>(
+    |                            ++++++++++++++++++++++
+
+error[E0277]: the trait bound `S: AsyncWrite` is not satisfied
+   --> src/smtp/handler.rs:203:18
+    |
+203 |     stream: &mut StreamType<S>,
+    |                  ^^^^^^^^^^^^^ the trait `AsyncWrite` is not implemented for `S`
+    |
+note: required by a bound in `StreamType`
+   --> src/smtp/stream.rs:8:20
+    |
+6   | pub enum StreamType<S>
+    |          ---------- required by a bound in this enum
+7   | where
+8   |     S: AsyncRead + AsyncWrite + Unpin,
+    |                    ^^^^^^^^^^ required by this bound in `StreamType`
+help: consider restricting type parameter `S`
+    |
+202 | async fn handle_mail_from<S: tokio::io::AsyncWrite>(
+    |                            +++++++++++++++++++++++
+
+error[E0277]: `S` cannot be unpinned
+   --> src/smtp/handler.rs:203:18
+    |
+203 |     stream: &mut StreamType<S>,
+    |                  ^^^^^^^^^^^^^ the trait `Unpin` is not implemented for `S`
+    |
+    = note: consider using the `pin!` macro
+            consider using `Box::pin` if you need to access the pinned value outside of the current scope
+note: required by a bound in `StreamType`
+   --> src/smtp/stream.rs:8:33
+    |
+6   | pub enum StreamType<S>
+    |          ---------- required by a bound in this enum
+7   | where
+8   |     S: AsyncRead + AsyncWrite + Unpin,
+    |                                 ^^^^^ required by this bound in `StreamType`
+help: consider restricting type parameter `S`
+    |
+202 | async fn handle_mail_from<S: std::marker::Unpin>(
+    |                            ++++++++++++++++++++
+
+error[E0277]: the trait bound `S: AsyncRead` is not satisfied
+   --> src/smtp/handler.rs:232:18
+    |
+232 |     stream: &mut StreamType<S>,
+    |                  ^^^^^^^^^^^^^ the trait `AsyncRead` is not implemented for `S`
+    |
+note: required by a bound in `StreamType`
+   --> src/smtp/stream.rs:8:8
+    |
+6   | pub enum StreamType<S>
+    |          ---------- required by a bound in this enum
+7   | where
+8   |     S: AsyncRead + AsyncWrite + Unpin,
+    |        ^^^^^^^^^ required by this bound in `StreamType`
+help: consider restricting type parameter `S`
+    |
+231 | async fn handle_rcpt_to<S: tokio::io::AsyncRead>(
+    |                          ++++++++++++++++++++++
+
+error[E0277]: the trait bound `S: AsyncWrite` is not satisfied
+   --> src/smtp/handler.rs:232:18
+    |
+232 |     stream: &mut StreamType<S>,
+    |                  ^^^^^^^^^^^^^ the trait `AsyncWrite` is not implemented for `S`
+    |
+note: required by a bound in `StreamType`
+   --> src/smtp/stream.rs:8:20
+    |
+6   | pub enum StreamType<S>
+    |          ---------- required by a bound in this enum
+7   | where
+8   |     S: AsyncRead + AsyncWrite + Unpin,
+    |                    ^^^^^^^^^^ required by this bound in `StreamType`
+help: consider restricting type parameter `S`
+    |
+231 | async fn handle_rcpt_to<S: tokio::io::AsyncWrite>(
+    |                          +++++++++++++++++++++++
+
+error[E0277]: `S` cannot be unpinned
+   --> src/smtp/handler.rs:232:18
+    |
+232 |     stream: &mut StreamType<S>,
+    |                  ^^^^^^^^^^^^^ the trait `Unpin` is not implemented for `S`
+    |
+    = note: consider using the `pin!` macro
+            consider using `Box::pin` if you need to access the pinned value outside of the current scope
+note: required by a bound in `StreamType`
+   --> src/smtp/stream.rs:8:33
+    |
+6   | pub enum StreamType<S>
+    |          ---------- required by a bound in this enum
+7   | where
+8   |     S: AsyncRead + AsyncWrite + Unpin,
+    |                                 ^^^^^ required by this bound in `StreamType`
+help: consider restricting type parameter `S`
+    |
+231 | async fn handle_rcpt_to<S: std::marker::Unpin>(
+    |                          ++++++++++++++++++++
+
+error[E0277]: the trait bound `S: AsyncRead` is not satisfied
+   --> src/smtp/handler.rs:267:18
+    |
+267 |     stream: &mut StreamType<S>,
+    |                  ^^^^^^^^^^^^^ the trait `AsyncRead` is not implemented for `S`
+    |
+note: required by a bound in `StreamType`
+   --> src/smtp/stream.rs:8:8
+    |
+6   | pub enum StreamType<S>
+    |          ---------- required by a bound in this enum
+7   | where
+8   |     S: AsyncRead + AsyncWrite + Unpin,
+    |        ^^^^^^^^^ required by this bound in `StreamType`
+help: consider restricting type parameter `S`
+    |
+266 | async fn handle_data<S: tokio::io::AsyncRead>(
+    |                       ++++++++++++++++++++++
+
+error[E0277]: the trait bound `S: AsyncWrite` is not satisfied
+   --> src/smtp/handler.rs:267:18
+    |
+267 |     stream: &mut StreamType<S>,
+    |                  ^^^^^^^^^^^^^ the trait `AsyncWrite` is not implemented for `S`
+    |
+note: required by a bound in `StreamType`
+   --> src/smtp/stream.rs:8:20
+    |
+6   | pub enum StreamType<S>
+    |          ---------- required by a bound in this enum
+7   | where
+8   |     S: AsyncRead + AsyncWrite + Unpin,
+    |                    ^^^^^^^^^^ required by this bound in `StreamType`
+help: consider restricting type parameter `S`
+    |
+266 | async fn handle_data<S: tokio::io::AsyncWrite>(
+    |                       +++++++++++++++++++++++
+
+error[E0277]: `S` cannot be unpinned
+   --> src/smtp/handler.rs:267:18
+    |
+267 |     stream: &mut StreamType<S>,
+    |                  ^^^^^^^^^^^^^ the trait `Unpin` is not implemented for `S`
+    |
+    = note: consider using the `pin!` macro
+            consider using `Box::pin` if you need to access the pinned value outside of the current scope
+note: required by a bound in `StreamType`
+   --> src/smtp/stream.rs:8:33
+    |
+6   | pub enum StreamType<S>
+    |          ---------- required by a bound in this enum
+7   | where
+8   |     S: AsyncRead + AsyncWrite + Unpin,
+    |                                 ^^^^^ required by this bound in `StreamType`
+help: consider restricting type parameter `S`
+    |
+266 | async fn handle_data<S: std::marker::Unpin>(
+    |                       ++++++++++++++++++++
+
+error[E0277]: the trait bound `S: AsyncRead` is not satisfied
+   --> src/smtp/handler.rs:344:18
+    |
+344 |     stream: &mut StreamType<S>,
+    |                  ^^^^^^^^^^^^^ the trait `AsyncRead` is not implemented for `S`
+    |
+note: required by a bound in `StreamType`
+   --> src/smtp/stream.rs:8:8
+    |
+6   | pub enum StreamType<S>
+    |          ---------- required by a bound in this enum
+7   | where
+8   |     S: AsyncRead + AsyncWrite + Unpin,
+    |        ^^^^^^^^^ required by this bound in `StreamType`
+help: consider restricting type parameter `S`
+    |
+343 | async fn handle_rset<S: tokio::io::AsyncRead>(
+    |                       ++++++++++++++++++++++
+
+error[E0277]: the trait bound `S: AsyncWrite` is not satisfied
+   --> src/smtp/handler.rs:344:18
+    |
+344 |     stream: &mut StreamType<S>,
+    |                  ^^^^^^^^^^^^^ the trait `AsyncWrite` is not implemented for `S`
+    |
+note: required by a bound in `StreamType`
+   --> src/smtp/stream.rs:8:20
+    |
+6   | pub enum StreamType<S>
+    |          ---------- required by a bound in this enum
+7   | where
+8   |     S: AsyncRead + AsyncWrite + Unpin,
+    |                    ^^^^^^^^^^ required by this bound in `StreamType`
+help: consider restricting type parameter `S`
+    |
+343 | async fn handle_rset<S: tokio::io::AsyncWrite>(
+    |                       +++++++++++++++++++++++
+
+error[E0277]: `S` cannot be unpinned
+   --> src/smtp/handler.rs:344:18
+    |
+344 |     stream: &mut StreamType<S>,
+    |                  ^^^^^^^^^^^^^ the trait `Unpin` is not implemented for `S`
+    |
+    = note: consider using the `pin!` macro
+            consider using `Box::pin` if you need to access the pinned value outside of the current scope
+note: required by a bound in `StreamType`
+   --> src/smtp/stream.rs:8:33
+    |
+6   | pub enum StreamType<S>
+    |          ---------- required by a bound in this enum
+7   | where
+8   |     S: AsyncRead + AsyncWrite + Unpin,
+    |                                 ^^^^^ required by this bound in `StreamType`
+help: consider restricting type parameter `S`
+    |
+343 | async fn handle_rset<S: std::marker::Unpin>(
+    |                       ++++++++++++++++++++
+
+error[E0277]: the trait bound `S: AsyncRead` is not satisfied
+   --> src/smtp/handler.rs:352:38
+    |
+352 | async fn handle_noop<S>(stream: &mut StreamType<S>) -> Result<(), Box<dyn std::error::Error>> {
+    |                                      ^^^^^^^^^^^^^ the trait `AsyncRead` is not implemented for `S`
+    |
+note: required by a bound in `StreamType`
+   --> src/smtp/stream.rs:8:8
+    |
+6   | pub enum StreamType<S>
+    |          ---------- required by a bound in this enum
+7   | where
+8   |     S: AsyncRead + AsyncWrite + Unpin,
+    |        ^^^^^^^^^ required by this bound in `StreamType`
+help: consider restricting type parameter `S`
+    |
+352 | async fn handle_noop<S: tokio::io::AsyncRead>(stream: &mut StreamType<S>) -> Result<(), Box<dyn std::error::Error>> {
+    |                       ++++++++++++++++++++++
+
+error[E0277]: the trait bound `S: AsyncWrite` is not satisfied
+   --> src/smtp/handler.rs:352:38
+    |
+352 | async fn handle_noop<S>(stream: &mut StreamType<S>) -> Result<(), Box<dyn std::error::Error>> {
+    |                                      ^^^^^^^^^^^^^ the trait `AsyncWrite` is not implemented for `S`
+    |
+note: required by a bound in `StreamType`
+   --> src/smtp/stream.rs:8:20
+    |
+6   | pub enum StreamType<S>
+    |          ---------- required by a bound in this enum
+7   | where
+8   |     S: AsyncRead + AsyncWrite + Unpin,
+    |                    ^^^^^^^^^^ required by this bound in `StreamType`
+help: consider restricting type parameter `S`
+    |
+352 | async fn handle_noop<S: tokio::io::AsyncWrite>(stream: &mut StreamType<S>) -> Result<(), Box<dyn std::error::Error>> {
+    |                       +++++++++++++++++++++++
+
+error[E0277]: `S` cannot be unpinned
+   --> src/smtp/handler.rs:352:38
+    |
+352 | async fn handle_noop<S>(stream: &mut StreamType<S>) -> Result<(), Box<dyn std::error::Error>> {
+    |                                      ^^^^^^^^^^^^^ the trait `Unpin` is not implemented for `S`
+    |
+    = note: consider using the `pin!` macro
+            consider using `Box::pin` if you need to access the pinned value outside of the current scope
+note: required by a bound in `StreamType`
+   --> src/smtp/stream.rs:8:33
+    |
+6   | pub enum StreamType<S>
+    |          ---------- required by a bound in this enum
+7   | where
+8   |     S: AsyncRead + AsyncWrite + Unpin,
+    |                                 ^^^^^ required by this bound in `StreamType`
+help: consider restricting type parameter `S`
+    |
+352 | async fn handle_noop<S: std::marker::Unpin>(stream: &mut StreamType<S>) -> Result<(), Box<dyn std::error::Error>> {
+    |                       ++++++++++++++++++++
+
+error[E0277]: the trait bound `S: AsyncRead` is not satisfied
+   --> src/smtp/handler.rs:357:38
+    |
+357 | async fn handle_quit<S>(stream: &mut StreamType<S>) -> Result<(), Box<dyn std::error::Error>> {
+    |                                      ^^^^^^^^^^^^^ the trait `AsyncRead` is not implemented for `S`
+    |
+note: required by a bound in `StreamType`
+   --> src/smtp/stream.rs:8:8
+    |
+6   | pub enum StreamType<S>
+    |          ---------- required by a bound in this enum
+7   | where
+8   |     S: AsyncRead + AsyncWrite + Unpin,
+    |        ^^^^^^^^^ required by this bound in `StreamType`
+help: consider restricting type parameter `S`
+    |
+357 | async fn handle_quit<S: tokio::io::AsyncRead>(stream: &mut StreamType<S>) -> Result<(), Box<dyn std::error::Error>> {
+    |                       ++++++++++++++++++++++
+
+error[E0277]: the trait bound `S: AsyncWrite` is not satisfied
+   --> src/smtp/handler.rs:357:38
+    |
+357 | async fn handle_quit<S>(stream: &mut StreamType<S>) -> Result<(), Box<dyn std::error::Error>> {
+    |                                      ^^^^^^^^^^^^^ the trait `AsyncWrite` is not implemented for `S`
+    |
+note: required by a bound in `StreamType`
+   --> src/smtp/stream.rs:8:20
+    |
+6   | pub enum StreamType<S>
+    |          ---------- required by a bound in this enum
+7   | where
+8   |     S: AsyncRead + AsyncWrite + Unpin,
+    |                    ^^^^^^^^^^ required by this bound in `StreamType`
+help: consider restricting type parameter `S`
+    |
+357 | async fn handle_quit<S: tokio::io::AsyncWrite>(stream: &mut StreamType<S>) -> Result<(), Box<dyn std::error::Error>> {
+    |                       +++++++++++++++++++++++
+
+error[E0277]: `S` cannot be unpinned
+   --> src/smtp/handler.rs:357:38
+    |
+357 | async fn handle_quit<S>(stream: &mut StreamType<S>) -> Result<(), Box<dyn std::error::Error>> {
+    |                                      ^^^^^^^^^^^^^ the trait `Unpin` is not implemented for `S`
+    |
+    = note: consider using the `pin!` macro
+            consider using `Box::pin` if you need to access the pinned value outside of the current scope
+note: required by a bound in `StreamType`
+   --> src/smtp/stream.rs:8:33
+    |
+6   | pub enum StreamType<S>
+    |          ---------- required by a bound in this enum
+7   | where
+8   |     S: AsyncRead + AsyncWrite + Unpin,
+    |                                 ^^^^^ required by this bound in `StreamType`
+help: consider restricting type parameter `S`
+    |
+357 | async fn handle_quit<S: std::marker::Unpin>(stream: &mut StreamType<S>) -> Result<(), Box<dyn std::error::Error>> {
+    |                       ++++++++++++++++++++
+
+error[E0277]: the trait bound `StreamType<S>: AsyncRead` is not satisfied
+  --> src/smtp/stream.rs:14:26
+   |
+14 | impl<S> AsyncBufRead for StreamType<S>
+   |                          ^^^^^^^^^^^^^ the trait `AsyncRead` is not implemented for `StreamType<S>`
+   |
+   = help: the following other types implement trait `AsyncRead`:
+             &[u8]
+             &mut T
+             Box<T>
+             BufStream<RW>
+             DuplexStream
+             Pin<P>
+             SimplexStream
+             Upgraded
+           and 32 others
+note: required by a bound in `AsyncBufRead`
+  --> /home/shane/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tokio-1.43.0/src/io/async_buf_read.rs:23:25
+   |
+23 | pub trait AsyncBufRead: AsyncRead {
+   |                         ^^^^^^^^^ required by this bound in `AsyncBufRead`
+
+Some errors have detailed explanations: E0277, E0308, E0599.
+For more information about an error, try `rustc --explain E0277`.
+error: could not compile `mail-forge` (bin "mail-forge") due to 94 previous errors

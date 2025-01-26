@@ -1,4 +1,9 @@
-smtp_bind_address = "127.0.0.1:25"
+[server]
+smtp_bind_address = "0.0.0.0:25"
+hostname = "mx.textify.asgcom.net"
+cert_path = "/etc/letsencrypt/live/mx.textify.asgcom.net/fullchain.pem"
+key_path = "/etc/letsencrypt/live/mx.textify.asgcom.net/privkey.pem"
+max_size = 35882577
 
 [webhooks]
-"*@textify.asgcom.net" = "https://textify.asgcom.net/inbound"
+"*@textify.asgcom.net" = { url = "https://textify.asgcom.net/inbound", api_key = "12345" }
