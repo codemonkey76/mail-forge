@@ -1,4 +1,5 @@
 use chrono::Utc;
+use log::info;
 use rand::distributions::Alphanumeric;
 use rand::{thread_rng, Rng};
 use reqwest::Client;
@@ -12,7 +13,7 @@ pub async fn forward_to_webhook(
     raw_email: &str,
 ) -> Result<(), Box<dyn std::error::Error>> {
     let client = Client::new();
-    let api_key = "your-shared-secret";
+    let api_key = webhook.api_key.clone();
 
     let timestamp = Utc::now().timestamp().to_string();
 
@@ -22,7 +23,7 @@ pub async fn forward_to_webhook(
         .map(char::from)
         .collect();
 
-    let signature = generate_signature(api_key, &timestamp, &token);
+    let signature = generate_signature(&api_key, &timestamp, &token);
 
     let payload = json!({
     "email": raw_email,
@@ -30,6 +31,8 @@ pub async fn forward_to_webhook(
     "token": token,
     "signature": signature,
     });
+
+    info!("Payload: {}", payload);
 
     let response = client
         .post(webhook.url.clone())
