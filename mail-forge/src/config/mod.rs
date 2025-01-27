@@ -1,9 +1,7 @@
-pub mod structs;
-
-use rustls::ServerConfig;
+use serde::Deserialize;
+use std::collections::HashMap;
 use std::fs;
 use std::path::{Path, PathBuf};
-use structs::Config;
 use tokio_rustls::rustls::pki_types::pem::PemObject;
 use tokio_rustls::rustls::pki_types::{CertificateDer, PrivateKeyDer};
 
@@ -18,7 +16,7 @@ impl Config {
 pub fn load_certs(
     cert_path: PathBuf,
     key_path: PathBuf,
-) -> Result<ServerConfig, Box<dyn std::error::Error>> {
+) -> Result<rustls::ServerConfig, Box<dyn std::error::Error>> {
     let certs = CertificateDer::pem_file_iter(cert_path)?.collect::<Result<Vec<_>, _>>()?;
     let key = PrivateKeyDer::from_pem_file(key_path)?;
 
@@ -27,4 +25,25 @@ pub fn load_certs(
         .with_single_cert(certs, key)?;
 
     Ok(config)
+}
+
+#[derive(Debug, Deserialize)]
+pub struct Config {
+    pub server: ServerConfig,
+    pub webhooks: HashMap<String, WebhookConfig>,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct ServerConfig {
+    pub smtp_bind_address: String,
+    pub hostname: String,
+    pub max_size: usize,
+    pub cert_path: String,
+    pub key_path: String,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct WebhookConfig {
+    pub url: String,
+    pub api_key: String,
 }

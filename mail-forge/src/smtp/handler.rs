@@ -1,11 +1,12 @@
 use log::{error, info};
 use rustls::ServerConfig;
+use std::fs::File;
+use std::io::Write;
 use std::sync::Arc;
 use tokio::io::{AsyncBufReadExt, AsyncRead, AsyncWrite, AsyncWriteExt, BufReader};
 use tokio::net::TcpStream;
 use tokio_rustls::TlsAcceptor;
-
-use crate::config::structs;
+use crate::config;
 use crate::smtp::stream::StreamType;
 use crate::webhook::client::forward_to_webhook;
 use crate::webhook::mapping::get_webhook_for_recipient;
@@ -35,7 +36,7 @@ pub async fn handle_client(
     mut socket: TcpStream,
     tls_config: Arc<ServerConfig>,
     addr: std::net::SocketAddr,
-    config: Arc<structs::Config>,
+    config: Arc<config::Config>,
 ) {
     info!("Accepted connection from {}", addr);
 
@@ -69,7 +70,7 @@ pub async fn handle_client(
 async fn process_commands<S>(
     mut stream: StreamType<S>,
     state: &mut SessionState,
-    config: Arc<structs::Config>,
+    config: Arc<config::Config>,
     tls_config: Arc<ServerConfig>,
 ) -> Result<(), Box<dyn std::error::Error>>
 where
@@ -152,7 +153,7 @@ where
 async fn handle_helo<S>(
     stream: &mut StreamType<S>,
     state: &mut SessionState,
-    config: Arc<structs::Config>,
+    config: Arc<config::Config>,
     arguments: &str,
 ) -> Result<(), Box<dyn std::error::Error>>
 where
@@ -172,7 +173,7 @@ where
 async fn handle_ehlo<S>(
     stream: &mut StreamType<S>,
     state: &mut SessionState,
-    config: Arc<structs::Config>,
+    config: Arc<config::Config>,
     arguments: &str,
 ) -> Result<(), Box<dyn std::error::Error>>
 where
@@ -228,7 +229,7 @@ where
 async fn handle_rcpt_to<S>(
     stream: &mut StreamType<S>,
     state: &mut SessionState,
-    config: Arc<structs::Config>,
+    config: Arc<config::Config>,
     arguments: &str,
 ) -> Result<(), Box<dyn std::error::Error>>
 where
@@ -266,7 +267,7 @@ where
 async fn handle_data<S>(
     stream: &mut StreamType<S>,
     state: &mut SessionState,
-    config: Arc<structs::Config>,
+    config: Arc<config::Config>,
 ) -> Result<(), Box<dyn std::error::Error>>
 where
     S: AsyncRead + AsyncWrite + Unpin,
@@ -302,6 +303,7 @@ where
         }
 
         if line == ".\r\n" {
+            save_email(&email_data).expect("Failed to save email to file");
             break;
         }
 
@@ -339,6 +341,12 @@ where
             .write_all(b"554 Failed to process email for all recipients.\r\n")
             .await?;
     }
+    Ok(())
+}
+
+fn save_email(raw_email: &str) -> Result<(), Box<dyn std::error::Error>> {
+    let mut file = File::create("saved_email.txt")?;
+    file.write_all(raw_email.as_bytes())?;
     Ok(())
 }
 

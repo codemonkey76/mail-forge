@@ -1,10 +1,5 @@
-mod config;
-mod smtp;
-mod webhook;
-
 use std::env;
-
-use config::structs::Config;
+use mail_forge::{config, smtp};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -14,7 +9,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     env_logger::init();
 
-    let config = Config::load("config.toml")?;
+    let config = config::Config::load("config.toml")?;
 
     smtp::server::start(config).await?;
 

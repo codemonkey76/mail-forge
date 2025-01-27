@@ -1,10 +1,9 @@
 use log::info;
 use std::sync::Arc;
 use tokio::net::TcpListener;
+use crate::config::{load_certs,self};
 
-use crate::config::{load_certs, structs::Config};
-
-pub async fn start(config: Config) -> Result<(), Box<dyn std::error::Error>> {
+pub async fn start(config: config::Config) -> Result<(), Box<dyn std::error::Error>> {
     let listener = TcpListener::bind(&config.server.smtp_bind_address).await?;
     info!(
         "Starting SMTP server on {}",
