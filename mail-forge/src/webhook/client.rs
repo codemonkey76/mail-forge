@@ -78,28 +78,36 @@ fn generate_auth(api_key: &str) -> (String, String, String) {
 fn extract_attachments(raw_email: &str) -> Result<Vec<(String, Vec<u8>)>, Box<dyn std::error::Error>> {
     let parsed_mail = mailparse::parse_mail(raw_email.as_bytes())?;
     let mut attachments = Vec::new();
-
-    for (index, part) in parsed_mail.subparts.iter().enumerate() {
-        info!("Inspecting MIME part {}", index);
-
-        if let Some(content_disposition) = part.get_headers().get_first_value("content-disposition") {
-            if content_disposition.starts_with("attachment") {
-                let filename = part.get_headers().get_first_value("filename").unwrap_or_else(|| "unnamed_attachment".to_string());
-                let decoded_data = part.get_body_raw()?;
-                info!("Extracted attachment: filename={}, size={} bytes", filename, decoded_data.len());
-                attachments.push((filename, decoded_data));
-            } else {
-                debug!("Skipping non-attachment part with content-disposition: {}", content_disposition);
-            }
-        } else {
-            debug!("Skipping part with no content-disposition header");
-        }
-    }
-
-    info!("Total attachments extracted: {}", attachments.len());
+    parse_mime_parts(&parsed_mail, &mut attachments)?;
     Ok(attachments)
 }
 
+fn parse_mime_parts(part: &mailparse::ParsedMail, attachments: &mut Vec<(String, Vec<u8>)>) -> Result<(), Box<dyn std::error::Error>> {
+    for subpart in &part.subparts {
+        if let Some(content_disposition) = subpart.get_headers().get_first_value("content-disposition") {
+            if content_disposition.starts_with("attachment") || content_disposition.contains("filename=") {
+                let filename = subpart.get_headers().get_first_value("filename")
+                    .or_else(|| extract_filename_from_content_disposition(&content_disposition))
+                    .unwrap_or_else(|| "unnamed_attachment".to_string());
+                let decoded_data = subpart.get_body_raw()?;
+                attachments.push((filename, decoded_data));
+            }
+        }
+        parse_mime_parts(subpart, attachments)?;
+    }
+    Ok(())
+}
+
+fn extract_filename_from_content_disposition(content_disposition: &str) -> Option<String> {
+    content_disposition.split(';').find_map(|kv| {
+        let kv = kv.trim();
+        if kv.starts_with("filename=") {
+            Some(kv["filename=".len()..].trim_matches('"').to_string())
+        } else {
+            None
+        }
+    })
+}
 fn save_attachments_to_temp_files(attachments: &[(String, Vec<u8>)]) -> Result<Vec<path::PathBuf>, Box<dyn std::error::Error>> {
     let temp_dir = temp_dir();
     let mut file_paths = Vec::new();
