@@ -123,17 +123,26 @@ fn save_attachments_to_temp_files(attachments: &[(String, Vec<u8>)]) -> Result<V
 
     for (filename, data) in attachments {
         // Ensure filename is sanitized and not empty
-        let mut sanitized_filename = sanitize_filename::sanitize(&filename);
+        let sanitized_filename = sanitize_filename::sanitize(&filename);
         if sanitized_filename.is_empty() {
             return Err(format!("Attachment filename '{}' is invalid after sanitization.", filename).into());
         }
 
         // Handle duplicate filenames by appending a unique suffix;
+        let mut file_stem = sanitized_filename.clone();
+        let mut extension = String::new();
+
+        if let Some(pos) = sanitized_filename.rfind('.') {
+            file_stem = sanitized_filename[..pos].to_string();
+            extension = sanitized_filename[pos..].to_string(); // Include the dot
+        }
+
+        // Handle duplicate filenames by appending a unique suffix
         let mut temp_file_path = temp_dir.join(&sanitized_filename);
         let mut counter = 1;
         while temp_file_path.exists() {
-            sanitized_filename = format!("{}_{}", sanitize_filename::sanitize(filename), counter);
-            temp_file_path = temp_dir.join(&sanitized_filename);
+            let new_filename = format!("{}_{}{}", file_stem, counter, extension);
+            temp_file_path = temp_dir.join(new_filename);
             counter += 1;
         }
 
