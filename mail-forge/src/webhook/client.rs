@@ -27,7 +27,7 @@ pub async fn forward_to_webhook(
     let temp_files = save_attachments_to_temp_files(&attachments)?;
 
     // Create multipart form
-    let form = create_multipart_form(raw_email, &timestamp, &token, &signature, &temp_files)?;
+    let form = create_multipart_form(raw_email, &timestamp, &token, &signature, &temp_files).await?;
 
     // Send to webhook
     send_to_webhook(&client, &webhook.url, form).await?;
@@ -112,7 +112,7 @@ fn save_attachments_to_temp_files(attachments: &[(String, Vec<u8>)]) -> Result<V
     Ok(file_paths)
 }
 
-fn create_multipart_form(raw_email: &str,
+async fn create_multipart_form(raw_email: &str,
 timestamp: &str,
 token: &str,
 signature: &str,
@@ -126,7 +126,7 @@ file_paths: &[std::path::PathBuf],
 
     for (i, path) in file_paths.iter().enumerate() {
         let field_name = format!("attachment-{}", i + 1);
-        form = form.file(field_name, path);
+        form = form.file(field_name.clone(), path).await?;
     }
 
     Ok(form)
