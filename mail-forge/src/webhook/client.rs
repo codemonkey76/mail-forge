@@ -1,24 +1,27 @@
 use std::env::temp_dir;
 use std::fs::File;
+use std::io::Write;
 use std::path;
 use chrono::Utc;
-use log::{debug, error, info};
+use log::{error, info};
 use mailparse::MailHeaderMap;
 use rand::distributions::Alphanumeric;
 use rand::{thread_rng, Rng};
 use reqwest::{multipart, Client};
 use serde_json::json;
 use crate::config;
-use crate::webhook::utils::generate_signature;
+use crate::webhook::utils;
 
 pub async fn forward_to_webhook(
     webhook: &config::WebhookConfig,
     raw_email: &str,
 ) -> Result<(), Box<dyn std::error::Error>> {
     let client = Client::new();
-    let api_key = webhook.api_key.clone();
 
     let (timestamp, token, signature) = generate_auth(&webhook.api_key);
+
+    // Extract email data (subject, from, to, etc.)
+    let email_data = extract_email_data(raw_email)?;
 
     // Parse email and extract attachments
     let attachments = extract_attachments(raw_email)?;
@@ -27,7 +30,7 @@ pub async fn forward_to_webhook(
     let temp_files = save_attachments_to_temp_files(&attachments)?;
 
     // Create multipart form
-    let form = create_multipart_form(raw_email, &timestamp, &token, &signature, &temp_files).await?;
+    let form = create_multipart_form(raw_email, &email_data, &timestamp, &token, &signature, &temp_files).await?;
 
     // Send to webhook
     send_to_webhook(&client, &webhook.url, form).await?;
@@ -42,7 +45,10 @@ async fn send_to_webhook(client: &Client, webhook_url: &str,
     match response {
         Ok(resp) => {
             let status = resp.status();
-            let body = resp.text().await.unwrap_or_else(|_| "No body".to_string());
+            let body = resp.text().await.unwrap_or_else(|err| {
+                error!("Failed to read response body: {}", err);
+                "Unable to read body".to_string()
+            });
 
             if status.is_success() {
                 info!("Successfully forward to webhook: {}", webhook_url);
@@ -70,30 +76,33 @@ fn generate_auth(api_key: &str) -> (String, String, String) {
         .map(char::from)
         .collect();
 
-    let signature = generate_signature(&api_key, &timestamp, &token);
+    let signature = utils::generate_signature(&api_key, &timestamp, &token);
 
     (timestamp, token, signature)
 }
 
 fn extract_attachments(raw_email: &str) -> Result<Vec<(String, Vec<u8>)>, Box<dyn std::error::Error>> {
-    let parsed_mail = mailparse::parse_mail(raw_email.as_bytes())?;
+    let parsed_mail = mailparse::parse_mail(raw_email.as_bytes()).map_err(|e| format!("Failed to parse email: {}", e))?;
     let mut attachments = Vec::new();
-    parse_mime_parts(&parsed_mail, &mut attachments)?;
+
+    parse_mime_parts(&parsed_mail, &mut attachments).map_err(|e| format!("Failed to parse MIME parts: {}", e))?;
+
     Ok(attachments)
 }
 
 fn parse_mime_parts(part: &mailparse::ParsedMail, attachments: &mut Vec<(String, Vec<u8>)>) -> Result<(), Box<dyn std::error::Error>> {
-    for subpart in &part.subparts {
+    for (index, subpart) in part.subparts.iter().enumerate() {
         if let Some(content_disposition) = subpart.get_headers().get_first_value("content-disposition") {
             if content_disposition.starts_with("attachment") || content_disposition.contains("filename=") {
                 let filename = subpart.get_headers().get_first_value("filename")
                     .or_else(|| extract_filename_from_content_disposition(&content_disposition))
                     .unwrap_or_else(|| "unnamed_attachment".to_string());
-                let decoded_data = subpart.get_body_raw()?;
+                let decoded_data = subpart.get_body_raw().map_err(|e| format!("Failed to extract body for attachment '{}': {}", filename, e))?;
+
                 attachments.push((filename, decoded_data));
             }
         }
-        parse_mime_parts(subpart, attachments)?;
+        parse_mime_parts(subpart, attachments).map_err(|e| format!("Failed to parse subpart at index {}: {}", index, e))?;
     }
     Ok(())
 }
@@ -113,18 +122,37 @@ fn save_attachments_to_temp_files(attachments: &[(String, Vec<u8>)]) -> Result<V
     let mut file_paths = Vec::new();
 
     for (filename, data) in attachments {
-        let temp_file_path = temp_dir.join(filename);
+        // Ensure filename is sanitized and not empty
+        let mut sanitized_filename = sanitize_filename::sanitize(&filename);
+        if sanitized_filename.is_empty() {
+            return Err(format!("Attachment filename '{}' is invalid after sanitization.", filename).into());
+        }
+
+        // Handle duplicate filenames by appending a unique suffix;
+        let mut temp_file_path = temp_dir.join(&sanitized_filename);
+        let mut counter = 1;
+        while temp_file_path.exists() {
+            sanitized_filename = format!("{}_{}", sanitize_filename::sanitize(filename), counter);
+            temp_file_path = temp_dir.join(&sanitized_filename);
+            counter += 1;
+        }
+
+        // Write data to the file
         let mut temp_file = File::create(&temp_file_path)?;
+        temp_file.write_all(data)?;
         file_paths.push(temp_file_path);
     }
+
     Ok(file_paths)
 }
 
-async fn create_multipart_form(raw_email: &str,
-timestamp: &str,
-token: &str,
-signature: &str,
-file_paths: &[std::path::PathBuf],
+async fn create_multipart_form(
+    raw_email: &str,
+    email_data: &serde_json::Value,
+    timestamp: &str,
+    token: &str,
+    signature: &str,
+    file_paths: &[std::path::PathBuf],
 ) -> Result<multipart::Form, Box<dyn std::error::Error>> {
     let mut form = multipart::Form::new()
         .text("email", raw_email.to_string())
@@ -132,10 +160,69 @@ file_paths: &[std::path::PathBuf],
     .text("token", token.to_string())
     .text("signature", signature.to_string());
 
+    form = form
+        .text("subject", email_data["subject"].as_str().unwrap_or_default().to_string())
+        .text("from", email_data["from"].as_str().unwrap_or_default().to_string())
+        .text("to", email_data["to"].as_str().unwrap_or_default().to_string())
+        .text("date", email_data["date"].as_str().unwrap_or_default().to_string())
+        .text("body_plain", email_data["body_plain"].as_str().unwrap_or_default().to_string())
+        .text("body_html", email_data["body_html"].as_str().unwrap_or_default().to_string());
+
     for (i, path) in file_paths.iter().enumerate() {
         let field_name = format!("attachment-{}", i + 1);
         form = form.file(field_name.clone(), path).await?;
     }
 
     Ok(form)
+}
+
+fn extract_email_data(raw_email: &str) -> Result<serde_json::Value, Box<dyn std::error::Error>> {
+    // Parse the email
+    let parsed_mail = mailparse::parse_mail(raw_email.as_bytes())?;
+
+    // Extract headers
+    let headers = parsed_mail.get_headers();
+    let subject = headers.get_first_value("Subject").unwrap_or_default();
+    let from = headers.get_first_value("From").unwrap_or_default();
+    let to = headers.get_first_value("To").unwrap_or_default();
+    let date = headers.get_first_value("Date").unwrap_or_default();
+
+    // Extract body parts
+    let mut body_plain = String::new();
+    let mut body_html = String::new();
+
+    for part in parsed_mail.subparts.iter() {
+        let content_disposition = part.get_headers().get_first_value("content-disposition").unwrap_or_default();
+
+        if content_disposition.starts_with("attachment=") {
+            continue;
+        }
+
+        let content_type = part.get_headers().get_first_value("Content-Type").unwrap_or_default();
+
+        if is_mime_type(&content_type, "text/plain") && body_plain.is_empty() {
+            body_plain = part.get_body()?;
+        } else if is_mime_type(&content_type, "text/html") && body_html.is_empty() {
+            body_html = part.get_body()?;
+        }
+
+        if !body_plain.is_empty() && !body_html.is_empty() {
+            break;
+        }
+    }
+    // Build the JSON payload
+    let json_payload = json!({
+        "subject": subject,
+        "from": from,
+        "to": to,
+        "date": date,
+        "body_plain": body_plain,
+        "body_html": body_html,
+    });
+
+    Ok(json_payload)
+}
+
+fn is_mime_type(content_type: &str, target: &str) -> bool {
+    content_type.split(';').next().map(|s| s.trim()) == Some(target)
 }
