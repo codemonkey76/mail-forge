@@ -6,8 +6,9 @@ set -u # Treat unset vairables as an error and exit immediately
 # Define paths and variables
 APP_NAME="mail-forge"
 REPO_DIR="/home/ubuntu/$APP_NAME"
+PROJECT_DIR="$REPO_DIR/$APP_NAME"
 TARGET_BIN="/usr/local/bin/$APP_NAME"
-SYSTEMD_SERVICE="$APPNAME.service"
+SYSTEMD_SERVICE_FILE="$REPO_DIR/$APPNAME.service"
 SYSTEMD_DEST="/etc/systemd/system/$APP_NAME.service"
 CONFIG_FILE_SOURCE="$REPO_DIR/config.toml"
 CONFIG_FILE_DEST="$HOME/.config/mail-forge/config.toml"
@@ -17,8 +18,8 @@ confirm() {
 	while true; do
 		read -p "$1 [y/n]: " yn
 		case $yn in
-			[Yy*) return 0 ;;
-			[Nn*) return 1 ;;
+			[Yy]*) return 0 ;;
+			[Nn]*) return 1 ;;
 			*) echo "Please anser yes (y) or no (n)." ;;
 		esac
 	done
@@ -35,6 +36,7 @@ git pull
 
 
 echo "Building the application..."
+cd "$PROJECT_DIR"
 cargo build --release
 
 # Check if the systemd service file exists
@@ -52,7 +54,7 @@ fi
 
 # Ensure the configuration directory exists
 echo "Ensuring configuration directory exists..."
-mkdir -p "$(dirname "$CONFIGFILE_DEST")"
+mkdir -p "$(dirname "$CONFIG_FILE_DEST")"
 
 # Check if the configuration file exists
 if [ -f "$CONFIG_FILE_DEST" ]; then
@@ -70,6 +72,9 @@ fi
 
 echo "Stopping the service..."
 sudo systemctl stop "$APP_NAME.service" || echo "Service not running. Continuing..."
+
+echo "Deploying the new binary..."
+sudo cp "$PROJECT_DIR/target/release/$APP_NAME" "$TARGET_BIN"
 
 echo "Setting capabilities on the binary..."
 sudo setcap 'cap_net_bind_service=+ep' "$TARGET_BIN"
