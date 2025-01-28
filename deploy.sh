@@ -12,6 +12,7 @@ SYSTEMD_SERVICE_FILE="$REPO_DIR/$APP_NAME.service"
 SYSTEMD_DEST="/etc/systemd/system/$APP_NAME.service"
 CONFIG_FILE_SOURCE="$REPO_DIR/config.toml"
 CONFIG_FILE_DEST="$HOME/.config/mail-forge/config.toml"
+EMAIL_LOG_FOLDER="/var/log/$APP_NAME/emails"
 
 confirm() {
 	# Ask user for confirmation
@@ -69,6 +70,10 @@ else
 	cp "$CONFIG_FILE_SOURCE" "$CONFIG_FILE_DEST"
 fi
 
+echo "Ensuring /var/log/mail-forge/emails exists and has correct permissions..."
+sudo mkdir -p "$EMAIL_LOG_FOLDER"
+sudo chown ubuntu:ubuntu "$EMAIL_LOG_FOLDER"
+chmod 750 "$EMAIL_LOG_FOLDER"
 
 echo "Stopping the service..."
 sudo systemctl stop "$APP_NAME.service" || echo "Service not running. Continuing..."

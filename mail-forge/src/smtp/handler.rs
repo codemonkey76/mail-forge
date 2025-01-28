@@ -345,7 +345,12 @@ where
 }
 
 fn save_email(raw_email: &str) -> Result<(), Box<dyn std::error::Error>> {
-    let mut file = File::create("saved_email.txt")?;
+    let dir_path  = "/var/log/mail-forge/emails";
+    std::fs::create_dir_all(dir_path)?;
+
+    let file_path = format!("{}/{}.eml", dir_path, Utc::now().timestamp());
+    info!("Saving email to: {}", file_path);
+    let mut file = File::create(&file_path)?;
     file.write_all(raw_email.as_bytes())?;
     Ok(())
 }
