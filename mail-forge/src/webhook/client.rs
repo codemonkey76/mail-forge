@@ -207,49 +207,31 @@ fn extract_email_data(raw_email: &str) -> Result<serde_json::Value, Box<dyn std:
     let mut body_html = String::new();
 
 
-    // Check the root body part
-    let content_type = parsed_mail
-        .get_headers()
-        .get_first_value("Content-Type")
-        .unwrap_or_default()
-        .trim()
-        .to_string();
-
-    if content_type.starts_with("text/plain") {
-        body_plain = parsed_mail.get_body()?;
-    } else if content_type.starts_with("text/html") {
-        body_html = parsed_mail.get_body()?;
-    }
-
-    for part in parsed_mail.subparts.iter() {
-        let content_disposition = part
-            .get_headers()
-            .get_first_value("content-disposition")
-            .unwrap_or_default()
-            .trim()
-            .to_string();
-
-        if content_disposition.contains("attachment") {
-            continue;
-        }
-
-        let part_content_type = part
+    fn extract_body_recursive(
+        part: &mailparse::ParsedMail,
+        body_plain: &mut String,
+        body_html: &mut String,
+    ) -> Result<(), Box<dyn std::error::Error>> {
+        let content_type = part
             .get_headers()
             .get_first_value("Content-Type")
             .unwrap_or_default()
-            .trim()
-            .to_string();
+            .to_lowercase();
 
-        if part_content_type.starts_with("text/plain") && body_plain.is_empty() {
-            body_plain = part.get_body()?;
-        } else if part_content_type.starts_with( "text/html") && body_html.is_empty() {
-            body_html = part.get_body()?;
+        if content_type.starts_with("text/plain") && body_plain.is_empty() {
+            *body_plain = part.get_body()?;
+        } else if content_type.starts_with("text/html") && body_html.is_empty() {
+            *body_html = part.get_body()?;
         }
 
-        if !body_plain.is_empty() && !body_html.is_empty() {
-            break;
+        for body in &part.subparts {
+            extract_body_recursive(body, body_plain, body_html)?;
         }
+        Ok(())
     }
+
+    extract_body_recursive(&parsed_mail, &mut body_plain, &mut body_html)?;
+
     // Build the JSON payload
     let json_payload = json!({
         "subject": subject,
