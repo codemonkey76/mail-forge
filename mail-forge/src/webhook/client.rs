@@ -169,13 +169,13 @@ async fn create_multipart_form(
     .text("token", token.to_string())
     .text("signature", signature.to_string());
 
-    form = form
-        .text("subject", email_data["subject"].as_str().unwrap_or_default().to_string())
-        .text("from", email_data["from"].as_str().unwrap_or_default().to_string())
-        .text("to", email_data["to"].as_str().unwrap_or_default().to_string())
-        .text("date", email_data["date"].as_str().unwrap_or_default().to_string())
-        .text("body_plain", email_data["body_plain"].as_str().unwrap_or_default().to_string())
-        .text("body_html", email_data["body_html"].as_str().unwrap_or_default().to_string());
+    if let Some(obj) = email_data.as_object() {
+        for (key, value) in obj {
+            if let Some(text_value) = value.as_str() {
+                form = form.text(key.clone(), text_value.to_string());
+            }
+        }
+    }
 
     for (i, path) in file_paths.iter().enumerate() {
         let field_name = format!("attachment-{}", i + 1);
@@ -192,8 +192,15 @@ fn extract_email_data(raw_email: &str) -> Result<serde_json::Value, Box<dyn std:
     // Extract headers
     let headers = parsed_mail.get_headers();
     let subject = headers.get_first_value("Subject").unwrap_or_default();
-    let from = headers.get_first_value("From").unwrap_or_default();
-    let to = headers.get_first_value("To").unwrap_or_default();
+
+    // Extract and split "From" header into display name and email
+    let full_from = headers.get_first_value("From").unwrap_or_default();
+    let from_email = extract_email_address(&full_from);
+
+    // Extract and split "To" header into display name and email
+    let full_to = headers.get_first_value("To").unwrap_or_default();
+    let to_email = extract_email_address(&full_to);
+
     let date = headers.get_first_value("Date").unwrap_or_default();
 
     // Extract body parts
@@ -202,7 +209,13 @@ fn extract_email_data(raw_email: &str) -> Result<serde_json::Value, Box<dyn std:
 
 
     // Check the root body part
-    let content_type = parsed_mail.get_headers().get_first_value("Content-Type").unwrap_or_default();
+    let content_type = parsed_mail
+        .get_headers()
+        .get_first_value("Content-Type")
+        .unwrap_or_default()
+        .trim()
+        .to_string();
+
     if content_type.starts_with("text/plain") {
         body_plain = parsed_mail.get_body()?;
     } else if content_type.starts_with("text/html") {
@@ -210,13 +223,23 @@ fn extract_email_data(raw_email: &str) -> Result<serde_json::Value, Box<dyn std:
     }
 
     for part in parsed_mail.subparts.iter() {
-        let content_disposition = part.get_headers().get_first_value("content-disposition").unwrap_or_default();
+        let content_disposition = part
+            .get_headers()
+            .get_first_value("content-disposition")
+            .unwrap_or_default()
+            .trim()
+            .to_string();
 
         if content_disposition.contains("attachment") {
             continue;
         }
 
-        let part_content_type = part.get_headers().get_first_value("Content-Type").unwrap_or_default().trim().to_string();
+        let part_content_type = part
+            .get_headers()
+            .get_first_value("Content-Type")
+            .unwrap_or_default()
+            .trim()
+            .to_string();
 
         if part_content_type.starts_with("text/plain") && body_plain.is_empty() {
             body_plain = part.get_body()?;
@@ -231,12 +254,24 @@ fn extract_email_data(raw_email: &str) -> Result<serde_json::Value, Box<dyn std:
     // Build the JSON payload
     let json_payload = json!({
         "subject": subject,
-        "from": from,
-        "to": to,
+        "Subject": subject,
+        "From": full_from,
+        "from": from_email,
+        "To": full_to,
+        "to": to_email,
         "date": date,
-        "body_plain": body_plain,
-        "body_html": body_html,
+        "body-plain": body_plain,
+        "body-html": body_html,
     });
 
     Ok(json_payload)
+}
+
+fn extract_email_address(header_value: &str) -> String {
+    let email_regex = regex::Regex::new(r"<([^>]+)>").unwrap();
+    if let Some(captures) = email_regex.captures(header_value) {
+        captures.get(1).map_or_else(String::new, |m| m.as_str().to_string())
+    } else {
+        header_value.to_string()
+    }
 }

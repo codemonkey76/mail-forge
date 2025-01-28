@@ -1000,6 +1000,7 @@ dependencies = [
  "log",
  "mailparse",
  "rand",
+ "regex",
  "reqwest",
  "rustls",
  "sanitize-filename",
