@@ -1,5 +1,3 @@
-use base64::engine::general_purpose;
-use base64::Engine;
 use hmac::{Hmac, Mac};
 use sha2::Sha256;
 
@@ -15,5 +13,5 @@ pub fn generate_signature(api_key: &str, timestamp: &str, token: &str) -> String
     let result = mac.finalize();
     let signature_bytes = result.into_bytes();
 
-    general_purpose::STANDARD.encode(signature_bytes)
+    hex::encode(signature_bytes)
 }
