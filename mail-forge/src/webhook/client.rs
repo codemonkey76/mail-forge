@@ -164,7 +164,6 @@ async fn create_multipart_form(
     file_paths: &[std::path::PathBuf],
 ) -> Result<multipart::Form, Box<dyn std::error::Error>> {
     let mut form = multipart::Form::new()
-        .text("email", raw_email.to_string())
         .text("timestamp", timestamp.to_string())
     .text("token", token.to_string())
     .text("signature", signature.to_string());
