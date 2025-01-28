@@ -1,0 +1,17 @@
+[Unit]
+Description=Mail Forge Service
+After=network.target
+
+[Service]
+ExecStart=/usr/local/bin/mail-forge
+Restart=always
+RestartSec=5
+User=ubuntu
+WorkingDirectory=/home/ubuntu/.config/mail-forge
+Environment="RUST_LOG=info"
+LimitNOFILE=65536
+StandardOutput=append:/var/log/mail-forge.log
+StandardError=append:/var/log/mail-forge.log
+
+[Install]
+WantedBy=multi-user.target
