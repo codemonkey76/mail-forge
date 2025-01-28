@@ -191,18 +191,27 @@ fn extract_email_data(raw_email: &str) -> Result<serde_json::Value, Box<dyn std:
     let mut body_plain = String::new();
     let mut body_html = String::new();
 
+
+    // Check the root body part
+    let content_type = parsed_mail.get_headers().get_first_value("Content-Type").unwrap_or_default();
+    if content_type.starts_with("text/plain") {
+        body_plain = parsed_mail.get_body()?;
+    } else if content_type.starts_with("text/html") {
+        body_html = parsed_mail.get_body()?;
+    }
+
     for part in parsed_mail.subparts.iter() {
         let content_disposition = part.get_headers().get_first_value("content-disposition").unwrap_or_default();
 
-        if content_disposition.starts_with("attachment=") {
+        if content_disposition.contains("attachment") {
             continue;
         }
 
-        let content_type = part.get_headers().get_first_value("Content-Type").unwrap_or_default();
+        let part_content_type = part.get_headers().get_first_value("Content-Type").unwrap_or_default().trim().to_string();
 
-        if is_mime_type(&content_type, "text/plain") && body_plain.is_empty() {
+        if part_content_type.starts_with("text/plain") && body_plain.is_empty() {
             body_plain = part.get_body()?;
-        } else if is_mime_type(&content_type, "text/html") && body_html.is_empty() {
+        } else if part_content_type.starts_with( "text/html") && body_html.is_empty() {
             body_html = part.get_body()?;
         }
 
@@ -221,8 +230,4 @@ fn extract_email_data(raw_email: &str) -> Result<serde_json::Value, Box<dyn std:
     });
 
     Ok(json_payload)
-}
-
-fn is_mime_type(content_type: &str, target: &str) -> bool {
-    content_type.split(';').next().map(|s| s.trim()) == Some(target)
 }
