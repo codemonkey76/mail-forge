@@ -2,7 +2,7 @@ use std::env::temp_dir;
 use std::fs::File;
 use std::path;
 use chrono::Utc;
-use log::{error, info};
+use log::{debug, error, info};
 use mailparse::MailHeaderMap;
 use rand::distributions::Alphanumeric;
 use rand::{thread_rng, Rng};
@@ -79,15 +79,24 @@ fn extract_attachments(raw_email: &str) -> Result<Vec<(String, Vec<u8>)>, Box<dy
     let parsed_mail = mailparse::parse_mail(raw_email.as_bytes())?;
     let mut attachments = Vec::new();
 
-    for part in parsed_mail.subparts {
+    for (index, part) in parsed_mail.subparts.iter().enumerate() {
+        info!("Inspecting MIME part {}", index);
+
         if let Some(content_disposition) = part.get_headers().get_first_value("content-disposition") {
             if content_disposition.starts_with("attachment") {
                 let filename = part.get_headers().get_first_value("filename").unwrap_or_else(|| "unnamed_attachment".to_string());
                 let decoded_data = part.get_body_raw()?;
+                info!("Extracted attachment: filename={}, size={} bytes", filename, decoded_data.len());
                 attachments.push((filename, decoded_data));
+            } else {
+                debug!("Skipping non-attachment part with content-disposition: {}", content_disposition);
             }
+        } else {
+            debug!("Skipping part with no content-disposition header");
         }
     }
+
+    info!("Total attachments extracted: {}", attachments.len());
     Ok(attachments)
 }
 
