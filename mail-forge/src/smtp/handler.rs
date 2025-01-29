@@ -317,7 +317,7 @@ where
 
     for recipient in &state.rcpt_to {
         if let Some(webhook) = get_webhook_for_recipient(recipient, &config.webhooks) {
-            match forward_to_webhook(webhook, &email_data).await {
+            match forward_to_webhook(recipient, webhook, &email_data).await {
                 Ok(_) => {
                     info!(
                         "Email successfully forwarded to webhook {} for recipient {}",
