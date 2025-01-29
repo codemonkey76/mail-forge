@@ -1,16 +1,16 @@
+use crate::config;
+use crate::smtp::stream::StreamType;
+use crate::webhook::client::forward_to_webhook;
+use crate::webhook::mapping::get_webhook_for_recipient;
+use chrono::Utc;
 use log::{error, info};
 use rustls::ServerConfig;
 use std::fs::File;
 use std::io::Write;
 use std::sync::Arc;
-use chrono::Utc;
 use tokio::io::{AsyncBufReadExt, AsyncRead, AsyncWrite, AsyncWriteExt, BufReader};
 use tokio::net::TcpStream;
 use tokio_rustls::TlsAcceptor;
-use crate::config;
-use crate::smtp::stream::StreamType;
-use crate::webhook::client::forward_to_webhook;
-use crate::webhook::mapping::get_webhook_for_recipient;
 
 #[derive(Default)]
 struct SessionState {
@@ -258,8 +258,10 @@ where
 
     if get_webhook_for_recipient(email, &config.webhooks).is_some() {
         state.rcpt_to.push(email.to_string());
+        info!("Adding recipient: {}", email);
         stream.write_all(b"250 2.1.5 Recipient OK\r\n").await?;
     } else {
+        info!("Skipping recipient: {}", email);
         stream.write_all(b"550 5.7.1 Unable to relay\r\n").await?;
     }
     Ok(())
@@ -346,7 +348,7 @@ where
 }
 
 fn save_email(raw_email: &str) -> Result<(), Box<dyn std::error::Error>> {
-    let dir_path  = "/var/log/mail-forge/emails";
+    let dir_path = "/var/log/mail-forge/emails";
     std::fs::create_dir_all(dir_path)?;
 
     let file_path = format!("{}/{}.eml", dir_path, Utc::now().timestamp());
