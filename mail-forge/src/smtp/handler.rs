@@ -306,7 +306,8 @@ where
         }
 
         if line == ".\r\n" {
-            save_email(&email_data).expect("Failed to save email to file");
+            // Log the email to file
+            //save_email(&email_data).expect("Failed to save email to file");
             break;
         }
 

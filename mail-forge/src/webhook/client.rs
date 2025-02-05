@@ -289,4 +289,3 @@ fn extract_email_address(header_value: &str) -> String {
         header_value.to_string()
     }
 }
-
